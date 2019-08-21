@@ -14,7 +14,7 @@ import {
   templateUrl: 'map.page.html',
   styleUrls: ['map.page.scss']
 })
-export class MapPage {
+export class MapPage implements OnInit {
   map: GoogleMap;
   loading: any;
   constructor(
@@ -41,7 +41,6 @@ export class MapPage {
         tilt: 30
       }
     });
-    this.addMarker({lat: -25.344, lng: 131.036});
   }
 
   async onButtonClick() {
@@ -71,7 +70,7 @@ export class MapPage {
           snippet: 'lick my butt hole!',
           position: location.latLng,
           animation: GoogleMapsAnimation.BOUNCE,
-          icon: '../../../resources/flame-icon.png'
+          // icon: '../../../resources/flame-icon.png'
         });
 
         // show the infoWindow
@@ -86,16 +85,6 @@ export class MapPage {
         this.loading.dismiss();
         this.showToast(err.error_message);
       });
-  }
-
-  async addMarker(position) {
-    const marker: Marker = (this.map.addMarkerSync({
-      title: 'dank marker!',
-      snippet: 'This marker is awesome!',
-      position,
-      animation: GoogleMapsAnimation.BOUNCE,
-      icon: '../../../resources/flame-icon.png'
-    }));
   }
 
   async showToast(message: string) {
