@@ -18,12 +18,12 @@ const routes: Routes = [
         ]
       },
       {
-        path: 'map',
+        path: 'tab2',
         children: [
           {
             path: '',
             loadChildren: () =>
-              import('./map/map.module').then(m => m.MapPageModule)
+              import('./tab2/tab2.module').then(m => m.Tab2PageModule)
           }
         ]
       },

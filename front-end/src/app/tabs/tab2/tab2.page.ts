@@ -10,11 +10,11 @@ import {
 } from '@ionic-native/google-maps';
 
 @Component({
-  selector: 'app-map',
-  templateUrl: 'map.page.html',
-  styleUrls: ['map.page.scss']
+  selector: 'app-tab2',
+  templateUrl: 'tab2.page.html',
+  styleUrls: ['tab2.page.scss']
 })
-export class MapPage implements OnInit {
+export class Tab2Page implements OnInit {
   map: GoogleMap;
   loading: any;
   constructor(
