@@ -28,6 +28,7 @@
     "cordova-browser": "6.0.0",
     "cordova-plugin-googlemaps": "git+https://github.com/mapsplugin/cordova-plugin-googlemaps.git#multiple_maps",
     "core-js": "^2.5.4",
+    "leaflet": "^1.5.1",
     "rxjs": "~6.5.1",
     "tslib": "^1.9.0",
     "zone.js": "~0.9.1"
