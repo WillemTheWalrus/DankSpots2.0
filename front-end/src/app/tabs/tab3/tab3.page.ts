@@ -46,7 +46,7 @@ export class Tab3Page {
         .bindPopup('Look! A new Dank Spot!')
         .openPopup();
       }
-      this.map.setView([this.dataReturned.lat, this.dataReturned.long], 10);
+      this.map.setView([this.dataReturned.lat, this.dataReturned.long], 7);
     });
 
     return await modal.present();
