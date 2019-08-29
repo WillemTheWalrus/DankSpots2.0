@@ -7,4 +7,4 @@ When you clone repo, there are a few commands you'll need to run in the front-en
 2. npm install -g ionic -- this is the mobile framework that wraps Angular, comes with cli commands you'll see in the docs
 3. npm install -g codrova -- this is the native library
 
-Here's the  [Named Link](https://ionicframework.com/getting-started "Getting Started") link for any beginner direction. 
+Here's the  [Getting Started](https://ionicframework.com/getting-started "Getting Started") link for any beginner direction. 
