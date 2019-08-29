@@ -1,0 +1,19 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Example-Modal</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-grid>
+    <ion-row>
+      <ion-col text-center>
+        <!-- Input with placeholder -->
+        <ion-input inputmode="numeric" placeholder="Enter Lat"  [(ngModel)]="lat"></ion-input>
+        <!-- Input with placeholder -->
+        <ion-input inputmode="numeric" placeholder="Enter Long"  [(ngModel)]="long"></ion-input>
+        <ion-button (click)="closeModal()">Send It</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

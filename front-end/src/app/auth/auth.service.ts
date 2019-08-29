@@ -8,6 +8,6 @@ export class AuthService {
   constructor() { }
 
   login() {}
-  logout(){}
-  valdate(){}
+  logout() {}
+  validate() {}
 }
