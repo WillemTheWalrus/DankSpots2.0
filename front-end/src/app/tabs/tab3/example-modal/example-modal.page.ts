@@ -22,4 +22,8 @@ export class ExampleModalPage implements OnInit {
     await this.modalController.dismiss(markerPoints);
   }
 
+  async close() {
+    await this.modalController.dismiss();
+  }
+
 }
