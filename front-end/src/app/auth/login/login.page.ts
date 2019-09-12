@@ -7,7 +7,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
-
+  email: string;
+  password: string;
   constructor(private router: Router) { }
 
   ngOnInit() {
@@ -15,6 +16,10 @@ export class LoginPage implements OnInit {
 
   login() {
     this.router.navigateByUrl('/tabs');
+  }
+
+  signUp() {
+    this.router.navigateByUrl('/sign-up');
   }
 
 }

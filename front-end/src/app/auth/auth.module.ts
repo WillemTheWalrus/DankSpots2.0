@@ -1,14 +1,15 @@
 import { NgModule } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
-import { LoginPage } from './login/login.page';
 import { FormsModule } from '@angular/forms';
+import { LoginPage } from './login/login.page';
+import { SignUpPage } from './sign-up/sign-up.page';
 
 
 
 
 @NgModule({
-  declarations: [ LoginPage],
+  declarations: [LoginPage, SignUpPage],
   imports: [
     CommonModule,
     FormsModule,

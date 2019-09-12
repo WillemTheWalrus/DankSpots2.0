@@ -7,7 +7,7 @@ import { ModalController } from '@ionic/angular';
   styleUrls: ['./example-modal.page.scss'],
 })
 export class ExampleModalPage implements OnInit {
-
+  // toDo: move to shared module
   constructor( private modalController: ModalController) { }
   lat: number;
   long: number;

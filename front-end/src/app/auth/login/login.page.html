@@ -1,3 +1,30 @@
-<ion-content padding>
-    <ion-button expand="block" (click)="login()">Login</ion-button>
-</ion-content>
+<ion-header>
+    <ion-toolbar>
+      <ion-title>
+        Sign in
+      </ion-title>
+    </ion-toolbar>
+  </ion-header>
+  
+  <ion-content padding>
+      <form #loginForm="ngForm">
+          <ion-row>
+            <ion-col>
+              <ion-list inset>
+                <ion-item>
+                  <ion-input type="text" placeholder="Email" name="email" [(ngModel)]="email"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-input type="password" placeholder="Password" name="password" [(ngModel)]="password"></ion-input>
+                </ion-item>           
+              </ion-list>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col class="signup-col">
+              <ion-button color="primary" (click)="login()">Login</ion-button>
+              <ion-button color="primary" (click)="signUp()">Sign Up</ion-button>
+            </ion-col>
+          </ion-row>           
+        </form>
+  </ion-content>
