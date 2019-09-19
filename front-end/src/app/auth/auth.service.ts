@@ -1,8 +1,13 @@
 import { Router } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { AwsConfig } from './../app.config';
-import { CognitoUser, CognitoUserPool, CognitoUserAttribute, AuthenticationDetails , ICognitoUserPoolData , CognitoUserSession } from  'amazon-cognito-identity-js';
-import { Observable, of, throwError, Subject, from } from 'rxjs';
+import { CognitoUser,
+         CognitoUserPool,
+         CognitoUserAttribute,
+         AuthenticationDetails ,
+         ICognitoUserPoolData ,
+         CognitoUserSession } from 'amazon-cognito-identity-js';
+import { Observable, Subject, from } from 'rxjs';
 import {isNullOrUndefined} from 'util';
 
 @Injectable({
