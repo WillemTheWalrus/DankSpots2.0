@@ -1,22 +1,23 @@
 import { Injectable } from '@angular/core';
 
-declare const aws_cognito_region;
-declare const aws_user_pools_id;
-declare const aws_user_pools_web_client_id;
-declare const aws_cognito_identity_pool_id;
-declare const aws_cloud_logic_custom;
+const awsCognitoRegion = 'us-west-2';
+const awsUserPoolsId = 'us-west-2_ZRcqSgYNd';
+const awsClientId = '8f6qn2j3v9tloe94fn7t9j0f4';
+const awsARN= 'arn:aws:cognito-idp:us-west-2:976810362444:userpool/us-west-2_ZRcqSgYNd'
+// const aws_cognito_identity_pool_id;
+// const aws_cloud_logic_custom;
 
 @Injectable()
 export class AwsConfig {
   public load() {
-    const awsCloudLogicCustomObj = JSON.parse(aws_cloud_logic_custom);
+    // const awsCloudLogicCustomObj = JSON.parse(aws_cloud_logic_custom);
     return {
-      region: aws_cognito_region, // region you are deploying (all lower caps, e.g: us-east-1)
-      userPoolId: aws_user_pools_id, // your user pool ID
-      appId: aws_user_pools_web_client_id, // your user pool app ID
-      idpURL: `cognito-idp.${aws_cognito_region}.amazonaws.com`, // cognito idp url
-      identityPool: aws_cognito_identity_pool_id, // your federated identity pool ID
-      APIs: awsCloudLogicCustomObj.reduce((m, v) => { m[v.name] = v.endpoint; return m; }, {})
+      region: awsCognitoRegion, // region you are deploying (all lower caps, e.g: us-east-1)
+      userPoolId: awsUserPoolsId, // your user pool ID
+      appId: awsClientId, // your user pool app ID
+      idpURL: awsARN, // cognito idp url
+      // identityPool: aws_cognito_identity_pool_id, // your federated identity pool ID
+      // APIs: awsCloudLogicCustomObj.reduce((m, v) => { m[v.name] = v.endpoint; return m; }, {})
     };
   }
 }

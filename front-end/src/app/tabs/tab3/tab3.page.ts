@@ -1,7 +1,9 @@
+import { AuthService } from './../../auth/auth.service';
 import { Component } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Map, latLng, tileLayer, Layer, marker } from 'leaflet';
 import { ExampleModalPage } from './example-modal/example-modal.page';
+import { CognitoUser , CognitoUserAttribute } from 'amazon-cognito-identity-js';
 
 @Component({
   selector: 'app-tab3',
@@ -11,10 +13,14 @@ import { ExampleModalPage } from './example-modal/example-modal.page';
 export class Tab3Page {
   map: Map;
   dataReturned: any;
+  user: CognitoUser;
+  attrs: Array<CognitoUserAttribute> = [];
 
-  constructor(public modalController: ModalController) {}
+  constructor(public modalController: ModalController, private authService: AuthService) {}
   ionViewDidEnter() {
-    this.leafletMap(); }
+    console.log(this.authService.cognitoUser);
+    this.leafletMap();
+  }
 
   /** Remove map when we have multiple map object */
   ionViewWillLeave() {
