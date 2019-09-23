@@ -1,14 +1,15 @@
-import { Router } from '@angular/router';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { AwsConfig } from './../app.config';
 import { CognitoUser,
-         CognitoUserPool,
-         CognitoUserAttribute,
-         AuthenticationDetails ,
-         ICognitoUserPoolData ,
-         CognitoUserSession } from 'amazon-cognito-identity-js';
+  CognitoUserPool,
+  CognitoUserAttribute,
+  AuthenticationDetails ,
+  ICognitoUserPoolData ,
+  CognitoUserSession } from 'amazon-cognito-identity-js';
 import { Observable, Subject, from } from 'rxjs';
 import {isNullOrUndefined} from 'util';
+import { ToastController } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +24,8 @@ export class AuthService {
   private session: CognitoUserSession;
   private _signoutSubject: Subject<string> = new Subject<string>();
   private _signinSubject: Subject<string> = new Subject<string>();
-  constructor(private router: Router) {
+
+  constructor(private router: Router,  public toastController: ToastController) {
     this.AWS.config.region = this.config.region;
     this.poolData = { UserPoolId: this.config.userPoolId, ClientId: this.config.appId };
     this.userPool = new CognitoUserPool(this.poolData);
@@ -95,15 +97,13 @@ export class AuthService {
     // if (clearCache) { this.unauthCreds.clearCachedId(); }
     this.setCredentials(this.unauthCreds);
   }
-  // Used for custom attributes
-  // private buildAttributes(creds): Array<CognitoUserAttribute> {
-  //   const attributeEmail = new CognitoUserAttribute({Name: 'email', Value: creds.email});
-  //   const attributeName = new CognitoUserAttribute({Name: 'preferred_username', Value: creds.username});
-  //   const attributeList = [];
-  //   attributeList.push(attributeEmail);
-  //   attributeList.push(attributeName);
-  //   return attributeList;
-  // }
+ // Used for custom attributes
+  private buildAttributes(creds): Array<CognitoUserAttribute> {
+    const attributeEmail = new CognitoUserAttribute({Name: 'email', Value: creds.email});
+    const attributeList = [];
+    attributeList.push(attributeEmail);
+    return attributeList;
+  }
 
   private _getCreds(): Promise<any> {
     return !isNullOrUndefined(this.AWS.config) ? this.AWS.config.credentials : null;
@@ -144,8 +144,8 @@ export class AuthService {
     if (this._cognitoUser) {
       const name = this._cognitoUser.getUsername();
       this._cognitoUser.signOut();
-      this.resetCreds(true);
       this._signoutSubject.next(name);
+      this.resetCreds(true);
       this.router.navigateByUrl('/login');
     }
   }
@@ -154,7 +154,7 @@ export class AuthService {
   register(creds): Promise<CognitoUser> {
     return new Promise((resolve, reject) => {
       try {
-        this.userPool.signUp(creds.username, creds.password, null, null, (err, result) => {
+        this.userPool.signUp(creds.username, creds.password, this.buildAttributes(creds), null, (err, result) => {
           if (err) { return reject(err); }
           console.log('Register', result);
           resolve(result.user);
