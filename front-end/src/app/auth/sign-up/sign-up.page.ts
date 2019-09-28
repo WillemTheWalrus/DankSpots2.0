@@ -49,7 +49,7 @@ export class SignUpPage implements OnInit {
 
   async promptVerificationCode(creds: any) {
     const alert = await this.alertController.create({
-      title: 'Enter Verfication Code',
+      header: 'Enter Verification Code',
       inputs: [
         {
           name: 'confcode',
