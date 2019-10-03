@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 const awsCognitoRegion = 'us-west-2';
 const awsUserPoolsId = 'us-west-2_ZRcqSgYNd';
 const awsClientId = '8f6qn2j3v9tloe94fn7t9j0f4';
-const awsARN= 'arn:aws:cognito-idp:us-west-2:976810362444:userpool/us-west-2_ZRcqSgYNd'
+const awsARN = 'arn:aws:cognito-idp:us-west-2:976810362444:userpool/us-west-2_ZRcqSgYNd';
 // const aws_cognito_identity_pool_id;
 // const aws_cloud_logic_custom;
 

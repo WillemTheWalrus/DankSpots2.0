@@ -1,3 +1,4 @@
+import { config } from 'aws-sdk';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AwsConfig } from './../app.config';
@@ -11,13 +12,13 @@ import { Observable, Subject, from } from 'rxjs';
 import {isNullOrUndefined} from 'util';
 import { ToastController } from '@ionic/angular';
 
+declare const AWS: any;
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private config: any = new AwsConfig().load();
-  private AWS: any = {config: {}};
-  private unauthCreds: any;
   private poolData: ICognitoUserPoolData;
   private userPool: CognitoUserPool;
   private _cognitoUser: CognitoUser;
@@ -26,7 +27,7 @@ export class AuthService {
   private _signinSubject: Subject<string> = new Subject<string>();
 
   constructor(private router: Router,  public toastController: ToastController) {
-    this.AWS.config.region = this.config.region;
+    AWS.config.region = this.config.region;
     this.poolData = { UserPoolId: this.config.userPoolId, ClientId: this.config.appId };
     this.userPool = new CognitoUserPool(this.poolData);
     this.refreshOrResetCreds();
@@ -35,39 +36,8 @@ export class AuthService {
   get signoutNotification() { return Observable.create( fn => this._signoutSubject.subscribe(fn) ); }
   get signinNotification() { return Observable.create( fn => this._signinSubject.subscribe(fn) ); }
   get cognitoUser(): CognitoUser { return this._cognitoUser; }
+  // get currentIdentity(): string { return AWS.config.credentials.identityId; }
   isUserSignedIn(): boolean { return this._cognitoUser !== null; }
-
-
-  // private buildLogins(token) {
-  //   const key = this.config.idpURL + '/' + this.config.userPoolId;
-  //   const json = {Logins: {} };
-  //   json.Logins[key] = token;
-  //   return json;
-  // }
-
-  private setCredentials(newCreds) {
-    this.AWS.config.credentials = newCreds;
-  }
-
-  // private buildCreds() {
-  //   const json = this.buildLogins(this.session.getIdToken().getJwtToken());
-  //   const _AWS = this.AWS;
-  //   return new _AWS.CognitoIdentityCredentials(json);
-  // }
-
-  // private saveCreds(session, cognitoUser?): void {
-  //   this.session = session;
-  //   if (cognitoUser) { this._cognitoUser = cognitoUser; }
-  //   this.setCredentials(this.buildCreds());
-  // }
-
-  private getNewCognitoUser(creds): CognitoUser {
-    return new CognitoUser({ Username: creds.username, Pool: this.userPool });
-  }
-
-  private authDetails(creds): AuthenticationDetails {
-    return new AuthenticationDetails({Username: creds.username, Password: creds.password});
-  }
 
   private refreshOrResetCreds() {
     this._cognitoUser = this.userPool.getCurrentUser();
@@ -79,12 +49,43 @@ export class AuthService {
     }
   }
 
+  private setCredentials(newCreds) {
+    AWS.config.credentials = newCreds;
+  }
+
+  private buildCreds() {
+    AWS.config.region =  this.config.region;
+    const token = this.session.getIdToken().getJwtToken();
+    const key =  this.config.idpURL + '/' + this.config.userPoolId;
+    const creds = new AWS.CognitoIdentityCredentials({
+      Logins : {
+          // Change the key below according to the specific region your user pool is in.
+         key : token
+      }
+    });
+    return creds;
+  }
+
+  private saveCreds(session, cognitoUser?): void {
+    this.session = session;
+    if (cognitoUser) { this._cognitoUser = cognitoUser; }
+    this.setCredentials(this.buildCreds());
+  }
+
+  private getNewCognitoUser(creds): CognitoUser {
+    return new CognitoUser({ Username: creds.username, Pool: this.userPool });
+  }
+
+  private authDetails(creds): AuthenticationDetails {
+    return new AuthenticationDetails({Username: creds.username, Password: creds.password});
+  }
+
   private refreshSession(): Promise<CognitoUserSession> {
     return new Promise ((resolve, reject) => {
       this._cognitoUser.getSession((err, session) => {
         if (err) { console.log('Error refreshing user session', err); return reject(err); }
         console.log(`${new Date()} - Refreshed session for ${this._cognitoUser.getUsername()}. Valid?: `, session.isValid());
-        // this.saveCreds(session);
+        this.saveCreds(session);
         resolve(session);
       });
     });
@@ -92,10 +93,9 @@ export class AuthService {
 
   private resetCreds(clearCache: boolean = false) {
     console.log('Resetting credentials for unauth access');
-    this.AWS.config.region = this.config.region;
+    AWS.config.region = this.config.region;
     this._cognitoUser = null;
-    // if (clearCache) { this.unauthCreds.clearCachedId(); }
-    this.setCredentials(this.unauthCreds);
+    this.setCredentials(null);
   }
  // Used for custom attributes
   private buildAttributes(creds): Array<CognitoUserAttribute> {
@@ -106,7 +106,14 @@ export class AuthService {
   }
 
   private _getCreds(): Promise<any> {
-    return !isNullOrUndefined(this.AWS.config) ? this.AWS.config.credentials : null;
+    return new Promise((resolve, reject) => {
+      try {
+        AWS.config.credentials.get((err) => {
+          if (err) { return reject(err); }
+          resolve(AWS.config.credentials);
+        });
+      } catch (e) { reject(e); }
+    });
   }
 
   getCredentials(): Observable<any> {
@@ -126,7 +133,7 @@ export class AuthService {
           onSuccess: (session) => {
             this._cognitoUser = cognitoUser;
             console.log(`Signed in user ${cognitoUser.getUsername()}. Sessiong valid?: `, session.isValid());
-            // this.saveCreds(session, cognitoUser);
+            this.saveCreds(session, cognitoUser);
             this._signinSubject.next(cognitoUser.getUsername());
             resolve(cognitoUser);
           },
