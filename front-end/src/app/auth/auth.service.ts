@@ -1,4 +1,3 @@
-import { config } from 'aws-sdk';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AwsConfig } from './../app.config';
@@ -9,7 +8,6 @@ import { CognitoUser,
   ICognitoUserPoolData ,
   CognitoUserSession } from 'amazon-cognito-identity-js';
 import { Observable, Subject, from } from 'rxjs';
-import {isNullOrUndefined} from 'util';
 import { ToastController } from '@ionic/angular';
 
 declare const AWS: any;
