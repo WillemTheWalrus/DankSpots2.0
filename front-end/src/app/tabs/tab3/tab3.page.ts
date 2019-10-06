@@ -4,6 +4,7 @@ import { ModalController } from '@ionic/angular';
 import { Map, latLng, tileLayer, Layer, marker } from 'leaflet';
 import { ExampleModalPage } from './example-modal/example-modal.page';
 import { CognitoUser , CognitoUserAttribute } from 'amazon-cognito-identity-js';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
 
 @Component({
   selector: 'app-tab3',
@@ -15,10 +16,21 @@ export class Tab3Page {
   dataReturned: any;
   user: CognitoUser;
   attrs: Array<CognitoUserAttribute> = [];
+  userLocation: latLng;
 
-  constructor(public modalController: ModalController, private authService: AuthService) {}
+  constructor(public modalController: ModalController, private authService: AuthService, private geolocation: Geolocation) {}
   ionViewDidEnter() {
     console.log(this.authService.cognitoUser);
+    this.geolocation.getCurrentPosition().then((resp) => {
+      this.userLocation = latLng(resp.coords.latitude, resp.coords.longitude);
+      this.map.setView(this.userLocation, 10);
+    }).catch((error) => {
+      console.log('Error getting location', error);
+    });
+    const watch = this.geolocation.watchPosition();
+    watch.subscribe((data) => {
+      this.userLocation = latLng(data.coords.latitude, data.coords.longitude);
+    });
     this.leafletMap();
   }
 
@@ -29,15 +41,10 @@ export class Tab3Page {
 
   leafletMap() {
     // In setView add latLng and zoom
-    this.map = new Map('mapId').setView([32, -117], 10);
+    this.map = new Map('mapId').setView(latLng(32.7157, 117.1611), 10); // default to San Diego
     tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-      attribution: 'edupala.com © ionic LeafLet',
+      // attribution: 'edupala.com © ionic LeafLet',
     }).addTo(this.map);
-
-
-    marker([32, -117]).addTo(this.map)
-      .bindPopup('Ionic 4 <br> Leaflet.')
-      .openPopup();
   }
 
   async addADankSpot() {
