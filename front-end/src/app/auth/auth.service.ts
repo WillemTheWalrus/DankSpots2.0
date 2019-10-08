@@ -78,13 +78,13 @@ export class AuthService {
     return new AuthenticationDetails({Username: creds.username, Password: creds.password});
   }
 
-  private refreshSession(): Promise<CognitoUserSession> {
-    return new Promise ((resolve, reject) => {
+  private refreshSession(): Observable<CognitoUserSession> {
+    return Observable.create(observer => {
       this._cognitoUser.getSession((err, session) => {
-        if (err) { console.log('Error refreshing user session', err); return reject(err); }
+        if (err) { console.log('Error refreshing user session', err); observer.error(err); }
         console.log(`${new Date()} - Refreshed session for ${this._cognitoUser.getUsername()}. Valid?: `, session.isValid());
         this.saveCreds(session);
-        resolve(session);
+        observer.next(session);
       });
     });
   }
@@ -103,14 +103,12 @@ export class AuthService {
     return attributeList;
   }
 
-  private _getCreds(): Promise<any> {
-    return new Promise((resolve, reject) => {
-      try {
-        AWS.config.credentials.get((err) => {
-          if (err) { return reject(err); }
-          resolve(AWS.config.credentials);
-        });
-      } catch (e) { reject(e); }
+  private _getCreds(): Observable<any> {
+    return Observable.create(observer => {
+      AWS.config.credentials.get((err) => {
+        if (err) { return observer.error(err); }
+        observer.next(AWS.config.credentials);
+      });
     });
   }
 
@@ -118,29 +116,29 @@ export class AuthService {
     let result = null;
     if (this._cognitoUser === null) {result =  this._getCreds(); }
     else if (this.session && this.session.isValid()) {result = this._getCreds(); }
-    else { result = this.refreshSession().then(this._getCreds); }
+    else { result = this.refreshSession().subscribe(this._getCreds); }
     return from(result);
   }
 
   // signs in a user and notifies subscribers of a sign-in event
-  signin(creds): Promise<CognitoUser> {
+  signin(creds): Observable<CognitoUser> {
     const cognitoUser = this.getNewCognitoUser(creds);
-    return new Promise((resolve, reject) => {
-      try {
-        cognitoUser.authenticateUser(this.authDetails(creds), {
-          onSuccess: (session) => {
-            this._cognitoUser = cognitoUser;
-            console.log(`Signed in user ${cognitoUser.getUsername()}. Sessiong valid?: `, session.isValid());
-            this.saveCreds(session, cognitoUser);
-            this._signinSubject.next(cognitoUser.getUsername());
-            resolve(cognitoUser);
-          },
-          newPasswordRequired: (userAttributes, requiredAttributes) => {},
-          mfaRequired: (challengeName, challengeParameters) => {},
-          customChallenge: (challengeParameters) => {},
-          onFailure: reject
-        });
-      } catch (e) { reject(e); }
+    return Observable.create(observer => {
+      cognitoUser.authenticateUser(this.authDetails(creds), {
+        onSuccess: (session) => {
+          this._cognitoUser = cognitoUser;
+          this.saveCreds(session, cognitoUser);
+          this._signinSubject.next(cognitoUser.getUsername());
+          observer.next(session);
+          observer.complete();
+        },
+        newPasswordRequired: (userAttributes, requiredAttributes) => {},
+        mfaRequired: (challengeName, challengeParameters) => {},
+        customChallenge: (challengeParameters) => {},
+        onFailure: (error => {
+          observer.error(error);
+        })
+      });
     });
   }
 
@@ -156,29 +154,27 @@ export class AuthService {
   }
 
   // registers a new user
-  register(creds): Promise<CognitoUser> {
-    return new Promise((resolve, reject) => {
-      try {
-        this.userPool.signUp(creds.username, creds.password, this.buildAttributes(creds), null, (err, result) => {
-          if (err) { return reject(err); }
-          console.log('Register', result);
-          resolve(result.user);
-        });
-      } catch (e) { reject(e); }
+  register(creds): Observable<CognitoUser> {
+    return Observable.create(observer => {
+      this.userPool.signUp(creds.username, creds.password, this.buildAttributes(creds), null, (err, result) => {
+        if (err) { return observer.error(err); }
+        console.log('Register', result);
+        observer.next(result.user);
+        observer.complete();
+      });
     });
   }
 
   // confirms a user
-  confirm(creds): Promise<CognitoUser> {
+  confirm(creds): Observable<CognitoUser> {
     const cognitoUser = this.getNewCognitoUser(creds);
-    return new Promise((resolve, reject) => {
-      try {
-        console.log('Confirming...', CognitoUser);
-        cognitoUser.confirmRegistration(creds.confcode, true, (err, result) => {
-          if (err) { return reject(err); }
-          resolve(result.CognitoUser);
-        });
-      } catch (e) { reject(e); }
+    return Observable.create( observer => {
+      console.log('Confirming...', CognitoUser);
+      cognitoUser.confirmRegistration(creds.confcode, true, (err, result) => {
+        if (err) { return observer.error(err); }
+        observer.next(result.CognitoUser);
+        observer.complete();
+      });
     });
   }
 }

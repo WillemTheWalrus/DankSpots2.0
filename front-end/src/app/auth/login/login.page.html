@@ -7,15 +7,21 @@
   </ion-header>
   
   <ion-content padding>
-      <form #loginForm="ngForm">
+      <form [formGroup]="form">
           <ion-row>
             <ion-col>
               <ion-list inset>
                 <ion-item>
-                  <ion-input type="text" placeholder="Username" name="username" [(ngModel)]="username"></ion-input>
+                  <ion-input type="text" placeholder="Username" name="username" formControlName="username"></ion-input>
+                  <ion-text color="danger">
+                    {{formErrors.username}}
+                  </ion-text>
                 </ion-item>
                 <ion-item>
-                  <ion-input type="password" placeholder="Password" name="password" [(ngModel)]="password"></ion-input>
+                  <ion-input type="password" placeholder="Password" name="password" formControlName="password"></ion-input>
+                  <ion-text color="danger">
+                    {{formErrors.password}}
+                  </ion-text>
                 </ion-item>           
               </ion-list>
             </ion-col>
