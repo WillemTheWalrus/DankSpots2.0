@@ -47,6 +47,10 @@ export class SignUpPage implements OnInit {
     });
   }
 
+  cancel() {
+    this.router.navigateByUrl('/login');
+  }
+
   async promptVerificationCode(creds: any) {
     const alert = await this.alertController.create({
       header: 'Enter Verification Code',

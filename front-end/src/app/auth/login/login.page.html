@@ -1,30 +1,17 @@
-<ion-header>
-    <ion-toolbar>
-      <ion-title>
-        Sign in
-      </ion-title>
-    </ion-toolbar>
-  </ion-header>
-  
-  <ion-content padding>
+  <ion-content>
+    <div class="login-container">
+      <img src="./../../../assets/dank_spots.svg">
       <form #loginForm="ngForm">
-          <ion-row>
-            <ion-col>
-              <ion-list inset>
-                <ion-item>
-                  <ion-input type="text" placeholder="Username" name="username" [(ngModel)]="username"></ion-input>
-                </ion-item>
-                <ion-item>
-                  <ion-input type="password" placeholder="Password" name="password" [(ngModel)]="password"></ion-input>
-                </ion-item>           
-              </ion-list>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col class="signup-col">
-              <ion-button color="primary" (click)="login()">Login</ion-button>
-              <ion-button color="primary" (click)="signUp()">Sign Up</ion-button>
-            </ion-col>
-          </ion-row>           
-        </form>
+        <ion-item>
+          <ion-input class="login-fields" type="text" placeholder="Username" name="username" [(ngModel)]="username"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input type="password" placeholder="Password" name="password" [(ngModel)]="password"></ion-input>
+        </ion-item>
+        <div class="login-buttons-container">
+          <ion-button class="login-button" color="success" (click)="login()">Login</ion-button>
+          <ion-button class="login-button" color="dark" (click)="signUp()">Sign Up</ion-button>
+        </div>  
+      </form>
+      </div>
   </ion-content>
