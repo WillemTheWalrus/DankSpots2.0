@@ -26,25 +26,25 @@ export class SignUpPage implements OnInit {
       password: this.password,
       email: this.email,
     };
-    this.authService.register(credentials).then((user) => {
+    this.authService.register(credentials).subscribe(user => {
       console.log('register: success', user);
       this.promptVerificationCode(credentials);
-    }).catch((err) => {
-      console.log('error registering', err);
-      this.setError(err.message);
+    }, error => {
+      console.log('error registering', error);
+      this.setError(error.message);
     });
   }
 
   confirm(creds: any) {
-    this.authService.confirm(creds).then(
+    this.authService.confirm(creds).subscribe(
       () => {
         this.presentToast();
         this.router.navigateByUrl('/login');
+      }, error => {
+        console.log('error confirming', error);
+        this.setError(error.message);
       },
-    ).catch((err) => {
-      console.log('error confirming', err);
-      this.setError(err.message);
-    });
+    );
   }
 
   cancel() {

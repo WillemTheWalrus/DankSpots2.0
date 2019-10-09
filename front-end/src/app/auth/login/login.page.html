@@ -1,17 +1,23 @@
-  <ion-content>
-    <div class="login-container">
-      <img src="./../../../assets/dank_spots.svg">
-      <form #loginForm="ngForm">
-        <ion-item>
-          <ion-input class="login-fields" type="text" placeholder="Username" name="username" [(ngModel)]="username"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-input type="password" placeholder="Password" name="password" [(ngModel)]="password"></ion-input>
-        </ion-item>
-        <div class="login-buttons-container">
-          <ion-button class="login-button" color="success" (click)="login()">Login</ion-button>
-          <ion-button class="login-button" color="dark" (click)="signUp()">Sign Up</ion-button>
-        </div>  
-      </form>
-      </div>
-  </ion-content>
+<ion-content>
+  <div class="login-container">
+    <img src="./../../../assets/dank_spots.svg">
+    <form [formGroup]="form">
+      <ion-item>
+        <ion-input class="login-fields" type="text" placeholder="Username" name="username" formControlName="username"></ion-input>
+        <ion-text color="danger">
+          {{formErrors.username}}
+        </ion-text>
+      </ion-item>
+      <ion-item>
+        <ion-input type="password" placeholder="Password" name="password" formControlName="password"></ion-input>
+        <ion-text color="danger">
+          {{formErrors.password}}
+        </ion-text>
+      </ion-item>
+      <div class="login-buttons-container">
+        <ion-button class="login-button" color="success" (click)="login()">Login</ion-button>
+        <ion-button class="login-button" color="dark" (click)="signUp()">Sign Up</ion-button>
+      </div>  
+    </form>
+  </div>
+</ion-content>
