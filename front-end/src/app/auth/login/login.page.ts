@@ -24,6 +24,7 @@ export class LoginPage implements OnInit {
   login() {
     const credentials = this.form.value;
     this.authService.signin(credentials).subscribe(data => {
+      console.log(data);
       this.router.navigateByUrl('/tabs');
     }, error => {
       this.setError(error.message);
@@ -33,11 +34,6 @@ export class LoginPage implements OnInit {
 
   signUp() {
     this.router.navigateByUrl('/sign-up');
-  }
-
-  private setMessage(msg) {
-    this.message = msg;
-    this.error = null;
   }
 
   private setError(msg) {

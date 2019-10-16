@@ -1,7 +1,7 @@
 import { AuthService } from './../../auth/auth.service';
 import { Component } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import { Map, latLng, tileLayer, Layer, marker } from 'leaflet';
+import { Map, latLng, tileLayer , marker } from 'leaflet';
 import { ExampleModalPage } from './example-modal/example-modal.page';
 import { CognitoUser , CognitoUserAttribute } from 'amazon-cognito-identity-js';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
@@ -13,14 +13,12 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 })
 export class Tab3Page {
   map: Map;
-  dataReturned: any;
   user: CognitoUser;
   attrs: Array<CognitoUserAttribute> = [];
   userLocation: latLng;
 
   constructor(public modalController: ModalController, private authService: AuthService, private geolocation: Geolocation) {}
   ionViewDidEnter() {
-    console.log(this.authService.cognitoUser);
     this.geolocation.getCurrentPosition().then((resp) => {
       this.userLocation = latLng(resp.coords.latitude, resp.coords.longitude);
       this.map.setView(this.userLocation, 10);
@@ -51,18 +49,17 @@ export class Tab3Page {
     const modal = await this.modalController.create({
       component: ExampleModalPage
     });
-
-    modal.onDidDismiss().then((dataReturned: any) => {
-      if (dataReturned !== null) {
-        this.dataReturned = dataReturned.data;
-        marker([this.dataReturned.lat, this.dataReturned.long]).addTo(this.map)
-        .bindPopup('Look! A new Dank Spot!')
-        .openPopup();
-      }
-      this.map.setView([this.dataReturned.lat, this.dataReturned.long], 7);
+    marker(this.map.getCenter(), {draggable: true})
+    .addTo(this.map).bindPopup('Drag and drop icon to desired location').openPopup().on('dragend', event => {
+      const m = event.target;  // you could also simply access the marker through the closure
+      const latLng = m.getLatLng();  // but using the passed event is cleaner
+      modal.present();
+      modal.onDidDismiss().then((dataReturned: any) => {
+        if (dataReturned !== null) {
+          // do something
+        }
+      });
     });
-
-    return await modal.present();
   }
 
 }
