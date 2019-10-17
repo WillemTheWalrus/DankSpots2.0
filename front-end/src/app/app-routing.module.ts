@@ -1,3 +1,4 @@
+import { SignupEmailPage } from './auth/sign-up/signup-email/signup-email.page';
 import { AuthGuard } from './auth/auth.guard';
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
@@ -26,8 +27,9 @@ const routes: Routes = [
   { path: 'login-email',
     component: LoginEmailPage
   },
-
-
+  { path: 'signup-email',
+  component: SignupEmailPage
+  },
 ];
 @NgModule({
   imports: [

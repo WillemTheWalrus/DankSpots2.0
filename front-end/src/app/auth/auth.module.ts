@@ -1,3 +1,4 @@
+import { SignupEmailPage } from './sign-up/signup-email/signup-email.page';
 import { NgModule } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
@@ -10,7 +11,7 @@ import { LoginEmailPage } from './login/login-email/login-email.page';
 
 
 @NgModule({
-  declarations: [LoginPage, LoginEmailPage, SignUpPage],
+  declarations: [LoginPage, LoginEmailPage, SignUpPage, SignupEmailPage],
   imports: [
     CommonModule,
     FormsModule,
