@@ -32,34 +32,44 @@ export class Tab3Page {
     this.leafletMap();
   }
 
-  /** Remove map when we have multiple map object */
+  /** Remove map when we have multiple map objects */
   ionViewWillLeave() {
     this.map.remove();
   }
 
   leafletMap() {
-    // In setView add latLng and zoom
-    this.map = new Map('mapId').setView(latLng(32.7157, 117.1611), 10); // default to San Diego
+    // Initialize Leaflet map
+    this.map = new Map('mapId').setView(latLng(32.7157, -117.1611), 10); // default to San Diego
     tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-      // attribution: 'edupala.com © ionic LeafLet',
     }).addTo(this.map);
+
+    // Bind map press event for dropping a pin
+    this.map.on('contextmenu', e => {
+      this.addADankSpot(e.latlng);
+  });
   }
 
-  async addADankSpot() {
+  async addADankSpot(pressedLocation) {
     const modal = await this.modalController.create({
       component: ExampleModalPage
     });
-    marker(this.map.getCenter(), {draggable: true})
-    .addTo(this.map).bindPopup('Drag and drop icon to desired location').openPopup().on('dragend', event => {
-      const m = event.target;  // you could also simply access the marker through the closure
-      const latLng = m.getLatLng();  // but using the passed event is cleaner
+
+    // If dropping a pin, use press location.  Otherwise default to current map's center
+    const spotLocation = pressedLocation ? pressedLocation : this.map.getCenter();
+
+    // Function to handle marker click event. Launches modal.
+    const markerOnClick = () => {
       modal.present();
       modal.onDidDismiss().then((dataReturned: any) => {
         if (dataReturned !== null) {
           // do something
         }
       });
-    });
+    };
+
+    // Create marker and add to the map
+    marker(spotLocation, {draggable: true}).on('click', markerOnClick)
+    .addTo(this.map).bindPopup('New Dank Spot').openPopup();
   }
 
 }
