@@ -4,12 +4,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoginPage } from './login/login.page';
 import { SignUpPage } from './sign-up/sign-up.page';
+import { LoginEmailPage } from './login/login-email/login-email.page';
 
 
 
 
 @NgModule({
-  declarations: [LoginPage, SignUpPage],
+  declarations: [LoginPage, LoginEmailPage, SignUpPage],
   imports: [
     CommonModule,
     FormsModule,

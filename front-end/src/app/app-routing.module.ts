@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { LoginPage } from './auth/login/login.page';
 import { SignUpPage } from './auth/sign-up/sign-up.page';
+import { LoginEmailPage } from './auth/login/login-email/login-email.page';
 
 const routes: Routes = [
   {
@@ -17,11 +18,15 @@ const routes: Routes = [
   },
   {
     path: 'login',
-    component: LoginPage
+    component: LoginPage,
   },
   { path: 'sign-up',
     component: SignUpPage
   },
+  { path: 'login-email',
+    component: LoginEmailPage
+  },
+
 
 ];
 @NgModule({

@@ -1,9 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-const directives = [];
 @NgModule({
-  declarations: [directives],
+  declarations: [],
   imports: [
     CommonModule
   ]

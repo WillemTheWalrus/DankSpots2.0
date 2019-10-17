@@ -1,0 +1,41 @@
+<ion-header>
+    <ion-toolbar>
+      <ion-buttons slot="start">
+          <ion-back-button defaultHref="/"></ion-back-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+   
+
+<ion-content>
+    <form [formGroup]="form">
+        <ion-grid>
+            <ion-row>
+                <ion-col>
+                  <ion-list inset>
+                    <ion-item>
+                      <ion-input type="text" placeholder="Username" name="username" formControlName="username"></ion-input>
+                      <ion-text color="danger">
+                        {{formErrors.username}}
+                      </ion-text>
+                    </ion-item>
+                    <ion-item>
+                      <ion-input type="password" placeholder="Password" name="password" formControlName="password"></ion-input>
+                      <ion-text color="danger">
+                        {{formErrors.password}}
+                      </ion-text>
+                    </ion-item>     
+                  </ion-list>
+                </ion-col>
+              </ion-row>
+        </ion-grid>
+      </form>
+</ion-content>
+
+<ion-footer padding>
+  <ion-list>
+      <ion-item text-center button color="primary" (click)="login()">
+        <ion-label>Log In</ion-label>
+      </ion-item>
+    </ion-list>
+</ion-footer>
