@@ -16,4 +16,8 @@ export class LoginPage implements OnInit {
     this.router.navigateByUrl('/login-email');
   }
 
+  signUp() {
+    this.router.navigateByUrl('/sign-up');
+  }
+
 }

@@ -32,6 +32,7 @@ export class SignUpPage implements OnInit {
     }, error => {
       console.log('error registering', error);
       this.setError(error.message);
+      this.presentErrorToast();
     });
   }
 
@@ -90,5 +91,13 @@ export class SignUpPage implements OnInit {
     this.error = msg;
     this.message = null;
  }
+async presentErrorToast() {
+  const toast = await this.toastController.create({
+    message: this.error,
+    color: 'danger',
+    duration: 2000
+  });
+  toast.present();
+}
 
 }

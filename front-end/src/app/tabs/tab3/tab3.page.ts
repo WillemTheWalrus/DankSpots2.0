@@ -69,7 +69,14 @@ export class Tab3Page {
 
     // Create marker and add to the map
     marker(spotLocation, {draggable: true}).on('click', markerOnClick)
-    .addTo(this.map).bindPopup('New Dank Spot').openPopup();
+    .addTo(this.map).bindPopup('New Dank Spot').openPopup().on('dragend', event => {
+      modal.present();
+      modal.onDidDismiss().then((dataReturned: any) => {
+        if (dataReturned !== null) {
+          // do something
+        }
+      });
+    });
   }
 
 }

@@ -32,10 +32,6 @@ export class LoginEmailPage implements OnInit {
     });
   }
 
-  signUp() {
-    this.router.navigateByUrl('/sign-up');
-  }
-
   private setError(msg) {
       this.error = msg;
       this.message = null;
