@@ -1,20 +1,21 @@
 <ion-content color="dark">
+  <ion-header class="ion-margin login-title">LOG IN</ion-header>
   <form [formGroup]="form">
-    <ion-item>
+    <ion-item class="ion-margin">
       <ion-input type="text" placeholder="Username" name="username" formControlName="username"></ion-input>
       <ion-text color="danger">
         {{formErrors.username}}
       </ion-text>
     </ion-item>
-    <ion-item>
+    <ion-item class="ion-margin">
       <ion-input type="password" placeholder="Password" name="password" formControlName="password"></ion-input>
       <ion-text color="danger">
         {{formErrors.password}}
       </ion-text>
     </ion-item>
-    <div class="login-buttons-container">
+    <div class="ion-margin">
       <ion-button color="success" (click)="login()">Login</ion-button>
       <ion-button color="primary" (click)="signUp()">Sign Up</ion-button>
-    </div>  
+    </div>
   </form>
 </ion-content>

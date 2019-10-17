@@ -1,17 +1,16 @@
 <ion-content color="dark">
-  <ion-header class="signup-title">SIGN UP</ion-header>
-  <br>
+  <ion-header class="ion-margin signup-title">SIGN UP</ion-header>
   <form #registerForm="ngForm"> 
-    <ion-item>
+    <ion-item class="ion-margin" >
       <ion-input type="text" placeholder="Username" name="username" [(ngModel)]="username" required></ion-input>
     </ion-item>            
-    <ion-item>
+    <ion-item class="ion-margin" >
       <ion-input type="password" placeholder="Password" name="password" [(ngModel)]="password" required></ion-input>
     </ion-item> 
-    <ion-item>
+    <ion-item class="ion-margin" >
       <ion-input type="email" placeholder="Email" name="email" [(ngModel)]="email" required></ion-input>
     </ion-item>
-    <div class="signup-buttons-container">
+    <div class="ion-margin">
       <ion-button color="success" (click)="register()">Register</ion-button>    
       <ion-button color="medium" (click)="cancel()">Cancel</ion-button>
     </div>  
