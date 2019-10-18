@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -16,6 +16,9 @@ import { LoginEmailPage } from './login/login-email/login-email.page';
     FormsModule,
     ReactiveFormsModule,
     IonicModule,
+  ],
+  schemas: [
+    CUSTOM_ELEMENTS_SCHEMA,
   ]
 })
 export class AuthModule { }

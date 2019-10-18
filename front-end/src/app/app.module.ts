@@ -37,6 +37,6 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
     },
     Geolocation,
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {}

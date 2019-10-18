@@ -12,7 +12,7 @@
 </ion-content>
 <ion-footer padding>
     <ion-list>
-        <ion-item button color="primary" (click)="loginEmail()">
+        <ion-item button color="new" (click)="loginEmail()">
             <ion-icon name="mail" slot="start"></ion-icon>
             <ion-label>Log In With Email</ion-label>
         </ion-item>
@@ -24,9 +24,8 @@
       <ion-grid margin-bottom>
           <ion-row>
               <ion-col>
-                <div class="ion-text-start">
-                    <ion-text color="secondary">NEW TO DANK SPOTS?</ion-text>
-                    <ion-button margin-start color="secondary" size="small" (click)="signUp()">Sign Up</ion-button>
+                <div class="ion-text-center">
+                    <ion-router-link class="clickable" color="primary" (click)="signUp()">NEW TO DANK SPOTS? SIGN UP</ion-router-link>
                 </div>
               </ion-col>
           </ion-row>
