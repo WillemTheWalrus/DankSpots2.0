@@ -15,7 +15,6 @@ export class Tab4Page implements OnInit {
 
   toggleTheme(ev: any) {
     this.darkTheme = ev.target.checked;
-    document.body.classList.toggle('dark', this.darkTheme);
   }
 
   deleteAccount() {}
