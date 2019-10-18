@@ -14,10 +14,11 @@ export class Tab4Page implements OnInit {
   }
 
   toggleTheme(ev: any) {
-    console.log(ev);
     this.darkTheme = ev.target.checked;
     document.body.classList.toggle('dark', this.darkTheme);
   }
+
+  deleteAccount() {}
 
   signOut() {
     this.authService.signout();

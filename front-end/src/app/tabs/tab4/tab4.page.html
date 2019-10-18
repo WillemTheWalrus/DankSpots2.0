@@ -8,10 +8,17 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-<ion-list>
+<ion-list lines="none">
     <ion-item>
         <ion-label>Toggle Dark Mode</ion-label>
         <ion-toggle slot="end" [(ngModel)]="darkTheme" [checked]="darkTheme" (ionChange)="toggleTheme($event)"></ion-toggle>
     </ion-item>
   </ion-list>
 </ion-content>
+<ion-footer>
+    <ion-list lines="none">
+        <ion-item button (click)="deleteAccount()">
+            <ion-label text-center color="danger">Delete Account</ion-label>
+        </ion-item>
+      </ion-list>
+</ion-footer>
