@@ -41,6 +41,7 @@ export class LoginEmailPage implements OnInit {
     const toast = await this.toastController.create({
       message: this.error,
       color: 'danger',
+      showCloseButton: true,
       duration: 2000
     });
     toast.present();

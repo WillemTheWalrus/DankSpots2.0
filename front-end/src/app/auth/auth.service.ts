@@ -16,6 +16,7 @@ declare const AWS: any;
   providedIn: 'root'
 })
 export class AuthService {
+  private unauthCreds: any;
   private config: any = new AwsConfig().load();
   private poolData: ICognitoUserPoolData;
   private userPool: CognitoUserPool;
@@ -34,7 +35,7 @@ export class AuthService {
   get signoutNotification() { return Observable.create( fn => this._signoutSubject.subscribe(fn) ); }
   get signinNotification() { return Observable.create( fn => this._signinSubject.subscribe(fn) ); }
   get cognitoUser(): CognitoUser { return this._cognitoUser; }
-  // get currentIdentity(): string { return AWS.config.credentials.identityId; }
+  get currentIdentity(): string { return AWS.config.credentials.identityId; }
   isUserSignedIn(): boolean { return this._cognitoUser !== null; }
 
   private refreshOrResetCreds() {
@@ -54,12 +55,15 @@ export class AuthService {
   private buildCreds() {
     AWS.config.region =  this.config.region;
     const token = this.session.getIdToken().getJwtToken();
-    const key =  this.config.idpURL + '/' + this.config.userPoolId;
+    const key = this.config.idpURL + '/' + this.config.userPoolId;
+    const json = { IdentityPoolId: this.config.identityPool, Logins: {} };
+    json.Logins[key] = token;
     const creds = new AWS.CognitoIdentityCredentials({
       Logins : {
           // Change the key below according to the specific region your user pool is in.
          key : token
-      }
+      },
+      IdentityPoolId: this.config.identityPool,
     });
     return creds;
   }
@@ -78,13 +82,13 @@ export class AuthService {
     return new AuthenticationDetails({Username: creds.username, Password: creds.password});
   }
 
-  private refreshSession(): Observable<CognitoUserSession> {
-    return Observable.create(observer => {
+  private refreshSession(): Promise<CognitoUserSession> {
+    return new Promise ((resolve, reject) => {
       this._cognitoUser.getSession((err, session) => {
-        if (err) { console.log('Error refreshing user session', err); observer.error(err); }
+        if (err) { console.log('Error refreshing user session', err); return reject(err); }
         console.log(`${new Date()} - Refreshed session for ${this._cognitoUser.getUsername()}. Valid?: `, session.isValid());
         this.saveCreds(session);
-        observer.next(session);
+        resolve(session);
       });
     });
   }
@@ -93,7 +97,9 @@ export class AuthService {
     console.log('Resetting credentials for unauth access');
     AWS.config.region = this.config.region;
     this._cognitoUser = null;
-    this.setCredentials(null);
+    this.unauthCreds = this.unauthCreds || new AWS.CognitoIdentityCredentials({ IdentityPoolId: this.config.identityPool });
+    if (clearCache){ this.unauthCreds.clearCachedId(); }
+    this.setCredentials(this.unauthCreds);
   }
  // Used for custom attributes
   private buildAttributes(creds): Array<CognitoUserAttribute> {
@@ -103,12 +109,14 @@ export class AuthService {
     return attributeList;
   }
 
-  private _getCreds(): Observable<any> {
-    return Observable.create(observer => {
-      AWS.config.credentials.get((err) => {
-        if (err) { return observer.error(err); }
-        observer.next(AWS.config.credentials);
-      });
+  private _getCreds(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      try {
+        AWS.config.credentials.get((err) => {
+          if (err) { return reject(err); }
+          resolve(AWS.config.credentials);
+        });
+      } catch (e) { reject(e); }
     });
   }
 
@@ -116,7 +124,7 @@ export class AuthService {
     let result = null;
     if (this._cognitoUser === null) {result =  this._getCreds(); }
     else if (this.session && this.session.isValid()) {result = this._getCreds(); }
-    else { result = this.refreshSession().subscribe(this._getCreds); }
+    else { result = this.refreshSession().then(this._getCreds); }
     return from(result);
   }
 
@@ -172,8 +180,10 @@ export class AuthService {
       console.log('Confirming...', CognitoUser);
       cognitoUser.confirmRegistration(creds.confcode, true, (err, result) => {
         if (err) { return observer.error(err); }
-        observer.next(result.CognitoUser);
-        observer.complete();
+        else {
+          observer.next(result.CognitoUser);
+          observer.complete();
+        }
       });
     });
   }
