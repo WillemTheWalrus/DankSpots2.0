@@ -24,12 +24,15 @@ export class LoginEmailPage implements OnInit {
   login() {
     const credentials = this.form.value;
     this.authService.signin(credentials).subscribe(data => {
-      console.log(data);
       this.router.navigateByUrl('/tabs');
     }, error => {
       this.setError(error.message);
       this.presentErrorToast();
     });
+  }
+
+  forgotPassword() {
+    this.router.navigateByUrl('/forgot-password');
   }
 
   private setError(msg) {

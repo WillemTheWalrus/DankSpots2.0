@@ -1,9 +1,11 @@
+import { ConfirmPage } from './auth/confirm/confirm.page';
 import { AuthGuard } from './auth/auth.guard';
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { LoginPage } from './auth/login/login.page';
 import { SignUpPage } from './auth/sign-up/sign-up.page';
 import { LoginEmailPage } from './auth/login/login-email/login-email.page';
+import { ForgotPasswordPage } from './auth/forgot-password/forgot-password.page';
 
 const routes: Routes = [
   {
@@ -26,6 +28,15 @@ const routes: Routes = [
   { path: 'login-email',
     component: LoginEmailPage
   },
+  { path: 'confirm',
+    component: ConfirmPage
+  },
+  {
+    path: 'forgot-password',
+    component: ForgotPasswordPage,
+  },
+
+
 ];
 @NgModule({
   imports: [

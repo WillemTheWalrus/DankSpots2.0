@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Confirm Account</ion-title>
+    <ion-buttons slot="primary">
+      <ion-button color="primary" (click)="close()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-grid>
+    <ion-row>
+      <ion-col text-center>
+        <ion-input type="text" placeholder="Enter Confirmation Code" [(ngModel)]="confirmationCode"></ion-input>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col text-center>
+        <ion-button color="new" (click)="confirm()">Confirm</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

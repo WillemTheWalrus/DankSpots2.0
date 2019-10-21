@@ -1,3 +1,4 @@
+import { ConfirmPage } from './auth/confirm/confirm.page';
 import { AuthGuard } from './auth/auth.guard';
 import { AuthInterceptor } from './auth/auth.interceptor';
 import { NgModule } from '@angular/core';
@@ -7,9 +8,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-
 import { AppComponent } from './app.component';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AuthModule } from './auth/auth.module';
 import { SharedModule } from './shared/shared.module';
@@ -20,10 +19,10 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
   entryComponents: [],
   imports: [
     BrowserModule,
+    AuthModule,
     IonicModule.forRoot(),
     SharedModule,
     AppRoutingModule,
-    AuthModule,
   ],
   providers: [
     StatusBar,
