@@ -13,9 +13,9 @@ import { ExampleModalPage } from './example-modal/example-modal.page';
     FormsModule,
     RouterModule.forChild([
       { path: '', component: Tab3Page },
-      { path: 'modal', component: ExampleModalPage },
   ])
   ],
-  declarations: [Tab3Page, ExampleModalPage]
+  declarations: [Tab3Page, ExampleModalPage],
+  entryComponents: [ExampleModalPage]
 })
 export class Tab3PageModule {}
