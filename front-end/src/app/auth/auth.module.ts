@@ -1,3 +1,4 @@
+import { AuthRoutingModule } from './auth.router.module';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
@@ -19,6 +20,7 @@ import { ForgotPasswordPage } from './forgot-password/forgot-password.page';
     FormsModule,
     ReactiveFormsModule,
     IonicModule,
+    AuthRoutingModule
   ],
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA,
