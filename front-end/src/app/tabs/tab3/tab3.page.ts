@@ -5,6 +5,7 @@ import { Map, latLng, tileLayer , marker } from 'leaflet';
 import { ExampleModalPage } from './example-modal/example-modal.page';
 import { CognitoUser , CognitoUserAttribute } from 'amazon-cognito-identity-js';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { SpotsService } from './spots.service';
 
 @Component({
   selector: 'app-tab3',
@@ -17,7 +18,8 @@ export class Tab3Page {
   attrs: Array<CognitoUserAttribute> = [];
   userLocation: latLng;
 
-  constructor(public modalController: ModalController, private authService: AuthService, private geolocation: Geolocation) {}
+  constructor(public modalController: ModalController, private spotsService: SpotsService,
+              private authService: AuthService, private geolocation: Geolocation) {}
   ionViewDidEnter() {
     this.geolocation.getCurrentPosition().then((resp) => {
       this.userLocation = latLng(resp.coords.latitude, resp.coords.longitude);
@@ -30,6 +32,9 @@ export class Tab3Page {
       this.userLocation = latLng(data.coords.latitude, data.coords.longitude);
     });
     this.leafletMap();
+    // this.spotsService.getSpots().subscribe(spots => {console.log(spots); }, (error) => {
+    //   console.log(error);
+    // });
   }
 
   /** Remove map when we have multiple map objects */
