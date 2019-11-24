@@ -14,11 +14,12 @@ export class SpotsService {
   constructor(private http: HttpClient, private authService: AuthService) { }
   getSpots() {
     this.user = this.authService.cognitoUser;
-    const token = this.authService.isUserSignedIn ? `${this.user.signInUserSession.accessToken.jwtToken}` : null;
+    const token = this.authService.isUserSignedIn ? `${this.user.signInUserSession.idToken.jwtToken}` : null;
+    console.log(`${JSON.stringify(this.user.signInUserSession)}`);
     const httpOptions = {
       headers: new HttpHeaders({
         'Authorization': token,
-        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Origin': 'http://localhost:8100',
       })
     };
     const getSpots = this.http.get(`${environment.baseApi}/spot`, httpOptions );
