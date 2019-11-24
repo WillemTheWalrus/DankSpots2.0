@@ -15,7 +15,6 @@ export class SpotsService {
   getSpots() {
     this.user = this.authService.cognitoUser;
     const token = this.authService.isUserSignedIn ? `${this.user.signInUserSession.idToken.jwtToken}` : null;
-    console.log(`${JSON.stringify(this.user.signInUserSession)}`);
     const httpOptions = {
       headers: new HttpHeaders({
         'Authorization': token,
