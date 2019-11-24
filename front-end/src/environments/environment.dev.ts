@@ -7,5 +7,5 @@ export const environment = {
     production: true,
     envName: 'dev',
     assetUrl: '/',
-    dankServices: 'https://39lg8471i6.execute-api.us-west-2.amazonaws.com/Prod'
+    baseApi: 'https://39lg8471i6.execute-api.us-west-2.amazonaws.com/Prod'
   };

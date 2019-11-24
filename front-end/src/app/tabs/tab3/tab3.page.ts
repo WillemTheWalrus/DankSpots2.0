@@ -32,9 +32,9 @@ export class Tab3Page {
       this.userLocation = latLng(data.coords.latitude, data.coords.longitude);
     });
     this.leafletMap();
-    // this.spotsService.getSpots().subscribe(spots => {console.log(spots); }, (error) => {
-    //   console.log(error);
-    // });
+    this.spotsService.getSpots().subscribe(spots => {console.log(spots); }, (error) => {
+      console.log(error);
+    });
   }
 
   /** Remove map when we have multiple map objects */

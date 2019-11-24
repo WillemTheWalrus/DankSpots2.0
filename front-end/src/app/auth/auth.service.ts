@@ -164,7 +164,7 @@ export class AuthService {
   // registers a new user
   register(creds): Observable<CognitoUser> {
     return Observable.create(observer => {
-      this.userPool.signUp(creds.email, creds.password, this.buildAttributes(creds), null, (err, result) => {
+      this.userPool.signUp(creds.username, creds.password, this.buildAttributes(creds), null, (err, result) => {
         if (err) { return observer.error(err); }
         console.log('Register', result);
         observer.next(result.user);

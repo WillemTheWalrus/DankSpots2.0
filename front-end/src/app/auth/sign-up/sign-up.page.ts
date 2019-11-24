@@ -29,7 +29,7 @@ export class SignUpPage implements OnInit {
 
   signUp() {
     this.credentials = {
-      username: this.username,
+      username: this.email,
       password: this.password,
       email: this.email,
     };
