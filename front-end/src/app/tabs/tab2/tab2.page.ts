@@ -15,6 +15,7 @@ export class Tab2Page {
   map: Map;
   user: CognitoUser;
   userLocation: latLng;
+  // ToDo: make a spots and spot DTO
   spotsData: any;
 
   constructor(public modalController: ModalController, private spotsService: SpotsService, private geolocation: Geolocation) {}
@@ -43,32 +44,15 @@ export class Tab2Page {
   }
 
   async addADankSpot(pressedLocation) {
-    const modal = await this.modalController.create({
-      component: AddSpotModalModalPage
-    });
 
     // If dropping a pin, use press location.  Otherwise default to current map's center
     const spotLocation = pressedLocation ? pressedLocation : this.map.getCenter();
 
-    // Function to handle marker click event. Launches modal.
-    const markerOnClick = () => {
-      modal.present();
-      modal.onDidDismiss().then((dataReturned: any) => {
-        if (dataReturned !== null) {
-          // do something
-        }
-      });
-    };
-
     // Create marker and add to the map
-    marker(spotLocation, {draggable: true}).on('click', markerOnClick)
-    .addTo(this.map).bindPopup('New Dank Spot').openPopup().on('dragend', event => {
-      modal.present();
-      modal.onDidDismiss().then((dataReturned: any) => {
-        if (dataReturned !== null) {
-          // do something
-        }
-      });
+    marker(spotLocation, {draggable: true})
+    .addTo(this.map).bindPopup('New Dank Spot').openPopup()
+    .on('click dragend', ev => {
+      this.presentModal();
     });
   }
 
@@ -92,12 +76,20 @@ export class Tab2Page {
         return {...item, point: JSON.parse(item.geoJson) };
       });
       spots.forEach(spot => {
-        marker(spot.point.coordinates, {dragable: true})
-        .addTo(this.map);
+        const myMarker = marker([spot.point.coordinates[1], spot.point.coordinates[0]], { dragable: true, spot });
+        myMarker.addTo(this.map).bindPopup(spot.spotName).on('click', ev => {
+           const clickedSpot = ev.target.options.spot;
+           // set pop up content for the popover
+        });
       });
     },
       (error) => {console.log(error); }
     );
+  }
+
+  async presentModal() {
+    const modal = await this.modalController.create({component: AddSpotModalModalPage});
+    return await modal.present();
   }
 
 }
