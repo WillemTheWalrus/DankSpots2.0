@@ -1,17 +1,24 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>
-      Dank Spots
-    </ion-title>
-    <ion-buttons slot="primary">
-      <ion-button  color="primary" (click)="addADankSpot()">
-        Add Spot
+    <ion-buttons slot="end">
+      <ion-button color="primary" (click)="signOut()">
+       Sign Out
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-
 <ion-content>
-  <div id="mapId" style="width: 100%; height: 100%">
-  </div>
+<ion-list lines="none">
+    <ion-item>
+        <ion-label>Toggle Dark Mode</ion-label>
+        <ion-toggle slot="end" [(ngModel)]="darkTheme" [checked]="darkTheme" (ionChange)="toggleTheme($event)"></ion-toggle>
+    </ion-item>
+  </ion-list>
 </ion-content>
+<ion-footer>
+    <ion-list lines="none">
+        <ion-item button (click)="deleteAccount()">
+            <ion-label text-center color="danger">Delete Account</ion-label>
+        </ion-item>
+      </ion-list>
+</ion-footer>

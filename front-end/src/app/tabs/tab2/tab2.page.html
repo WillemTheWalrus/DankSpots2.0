@@ -1,13 +1,17 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      Dank Map
+      Dank Spots
     </ion-title>
+    <ion-buttons slot="primary">
+      <ion-button  color="primary" (click)="addADankSpot()">
+        Add Spot
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <div id="map_canvas">
-        <ion-button ion-button (click)="onButtonClick()">To Me  Bitch</ion-button>
+  <div id="mapId" style="width: 100%; height: 100%">
   </div>
 </ion-content>

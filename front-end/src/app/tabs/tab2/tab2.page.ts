@@ -1,104 +1,103 @@
-
-import { Component, OnInit } from '@angular/core';
-import {
-  ToastController,
-  Platform,
-  LoadingController
-} from '@ionic/angular';
-import {
-  GoogleMaps,
-  GoogleMap,
-  GoogleMapsEvent,
-  Marker,
-  GoogleMapsAnimation,
-  MyLocation
-} from '@ionic-native/google-maps';
-
+import { Component } from '@angular/core';
+import { ModalController } from '@ionic/angular';
+import { Map, latLng, tileLayer , marker } from 'leaflet';
+import { AddSpotModalModalPage } from './add-spot-modal/add-spot-modal.page';
+import { CognitoUser } from 'amazon-cognito-identity-js';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { SpotsService } from './spots.service';
 
 @Component({
   selector: 'app-tab2',
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss']
 })
-export class Tab2Page implements OnInit {
-  map: GoogleMap;
-  loading: any;
-  constructor(
-    public loadingCtrl: LoadingController,
-    public toastCtrl: ToastController,
-    private platform: Platform
-  ) {}
+export class Tab2Page {
+  map: Map;
+  user: CognitoUser;
+  userLocation: latLng;
+  spotsData: any;
 
-  async ngOnInit() {
-    // Since ngOnInit() is executed before `deviceready` event,
-    // you have to wait the event.;
-    await this.platform.ready();
-    await this.loadMap();
+  constructor(public modalController: ModalController, private spotsService: SpotsService, private geolocation: Geolocation) {}
+
+  ionViewDidEnter() {
+    this.leafletMap();
+    this.getGeoLocation();
+    this.getSpots();
   }
 
-  loadMap() {
-    this.map = GoogleMaps.create('map_canvas', {
-      camera: {
-        target: {
-          lat: 43.0741704,
-          lng: -89.3809802
-        },
-        zoom: 18,
-        tilt: 30
-      }
-    });
-
+  /** Remove map when we have multiple map objects */
+  ionViewWillLeave() {
+    this.map.remove();
   }
 
-  async onButtonClick() {
-    this.map.clear();
+  leafletMap() {
+    // Initialize Leaflet map
+    this.map = new Map('mapId').setView(latLng(32.7157, -117.1611), 10); // default to San Diego
+    tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+    }).addTo(this.map);
 
-    this.loading = await this.loadingCtrl.create({
-      message: 'Please wait...'
+    // Bind map press event for dropping a pin
+    this.map.on('contextmenu', e => {
+      this.addADankSpot(e.latlng);
+  });
+  }
+
+  async addADankSpot(pressedLocation) {
+    const modal = await this.modalController.create({
+      component: AddSpotModalModalPage
     });
-    await this.loading.present();
 
-    // Get the location of you
-    this.map.getMyLocation().then((location: MyLocation) => {
-      this.loading.dismiss();
-      console.log(JSON.stringify(location, null , 2));
+    // If dropping a pin, use press location.  Otherwise default to current map's center
+    const spotLocation = pressedLocation ? pressedLocation : this.map.getCenter();
 
-      // Move the map camera to the location with animation
-      this.map.animateCamera({
-        target: location.latLng,
-        zoom: 17,
-        tilt: 30
+    // Function to handle marker click event. Launches modal.
+    const markerOnClick = () => {
+      modal.present();
+      modal.onDidDismiss().then((dataReturned: any) => {
+        if (dataReturned !== null) {
+          // do something
+        }
       });
+    };
 
-      // add a marker
-      const marker: Marker = this.map.addMarkerSync({
-        title: '@ionic-native/google-maps plugin!',
-        snippet: 'This plugin is awesome!',
-        position: location.latLng,
-        animation: GoogleMapsAnimation.BOUNCE
+    // Create marker and add to the map
+    marker(spotLocation, {draggable: true}).on('click', markerOnClick)
+    .addTo(this.map).bindPopup('New Dank Spot').openPopup().on('dragend', event => {
+      modal.present();
+      modal.onDidDismiss().then((dataReturned: any) => {
+        if (dataReturned !== null) {
+          // do something
+        }
       });
-
-      // show the infoWindow
-      marker.showInfoWindow();
-
-      // If clicked it, display the alert
-      marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(() => {
-        this.showToast('clicked!');
-      });
-    })
-    .catch(err => {
-      this.loading.dismiss();
-      this.showToast(err.error_message);
     });
   }
 
-  async showToast(message: string) {
-    const toast = await this.toastCtrl.create({
-      message,
-      duration: 2000,
-      position: 'middle'
+  getGeoLocation() {
+    this.geolocation.getCurrentPosition().then((resp) => {
+      this.userLocation = latLng(resp.coords.latitude, resp.coords.longitude);
+      this.map.setView(this.userLocation, 10);
+    }).catch((error) => {
+      console.log('Error getting location', error);
     });
-
-    toast.present();
+    const watch = this.geolocation.watchPosition();
+    watch.subscribe((data) => {
+      this.userLocation = latLng(data.coords.latitude, data.coords.longitude);
+    });
   }
+
+  getSpots() {
+    this.spotsService.getSpots().subscribe((data: any) => {
+      this.spotsData = data;
+      const spots = data.Items.map(item => {
+        return {...item, point: JSON.parse(item.geoJson) };
+      });
+      spots.forEach(spot => {
+        marker(spot.point.coordinates, {dragable: true})
+        .addTo(this.map);
+      });
+    },
+      (error) => {console.log(error); }
+    );
+  }
+
 }

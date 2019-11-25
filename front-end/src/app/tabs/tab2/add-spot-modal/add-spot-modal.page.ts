@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 
 @Component({
-  selector: 'app-example-modal',
-  templateUrl: './example-modal.page.html',
-  styleUrls: ['./example-modal.page.scss'],
+  selector: 'app-add-spot-modal',
+  templateUrl: './add-spot-modal.page.html',
+  styleUrls: ['./add-spot-modal.page.scss'],
 })
-export class ExampleModalPage implements OnInit {
+export class AddSpotModalModalPage implements OnInit {
   // toDo: move to shared module
   constructor( private modalController: ModalController) { }
   lat: number;

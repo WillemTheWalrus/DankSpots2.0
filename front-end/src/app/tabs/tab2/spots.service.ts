@@ -3,7 +3,6 @@ import { environment } from '../../../environments/environment.dev';
 import {throwError as observableThrowError} from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
-import { CognitoUser } from 'amazon-cognito-identity-js';
 import { HttpClient, HttpHeaders} from '@angular/common/http';
 
 @Injectable({
