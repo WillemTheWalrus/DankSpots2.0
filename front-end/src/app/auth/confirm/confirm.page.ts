@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./confirm.page.scss'],
 })
 export class ConfirmPage implements OnInit {
+  credentials: object;
   confirmationCode: number;
   error: string;
   message: string;
@@ -22,19 +23,26 @@ export class ConfirmPage implements OnInit {
   ngOnInit() {
   }
 
-  private setError(msg) {
+  private setError(msg: string) {
     this.error = msg;
+    this.message = null;
+  }
+
+  private setMessage(msg: string) {
+    this.message = msg;
+    this.error = null;
   }
 
   confirm() {
-    const creds = {
+    this.credentials = {
       username: this.username,
       password: this.password,
       email: this.email,
       confcode: this.confirmationCode,
     };
-    this.authService.confirm(creds).subscribe(
+    this.authService.confirm(this.credentials).subscribe(
       () => {
+        this.setMessage('Confirmmation successfull!');
         this.presentToast();
         this.close();
       }, error => {
@@ -49,7 +57,7 @@ export class ConfirmPage implements OnInit {
 
   async presentToast() {
     const toast = await this.toastController.create({
-      message: 'Confirmmation successfull!',
+      message: this.message,
       duration: 2000,
       showCloseButton: true,
     });

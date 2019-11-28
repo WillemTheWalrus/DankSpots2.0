@@ -11,15 +11,26 @@ import { ToastController } from '@ionic/angular';
   styleUrls: ['./login-email.page.scss'],
 })
 export class LoginEmailPage implements OnInit {
-  form: FormGroup;
-  formErrors = AuthFormValidatorsService.loginFormErrors;
+  credentials: object;
   message: string;
   error: string;
+  form: FormGroup;
+  formErrors = AuthFormValidatorsService.formErrors;
   constructor(private router: Router, private authService: AuthService,
               private authFormValidatorsService: AuthFormValidatorsService, public toastController: ToastController) { }
   ngOnInit() {
     this.form = this.authFormValidatorsService.form;
   }
+
+  private setError(msg: string) {
+    this.error = msg;
+    this.message = null;
+  }
+
+  private setMessage(msg: string) {
+    this.message = msg;
+    this.error = null;
+}
 
   login() {
     const credentials = this.form.value;
@@ -27,7 +38,7 @@ export class LoginEmailPage implements OnInit {
       this.router.navigateByUrl('/tabs');
     }, error => {
       this.setError(error.message);
-      this.presentErrorToast();
+      this.presentToast();
     });
   }
 
@@ -35,12 +46,7 @@ export class LoginEmailPage implements OnInit {
     this.router.navigateByUrl('/forgot-password');
   }
 
-  private setError(msg) {
-      this.error = msg;
-      this.message = null;
-  }
-
-  async presentErrorToast() {
+  async presentToast() {
     const toast = await this.toastController.create({
       message: this.error,
       color: 'danger',

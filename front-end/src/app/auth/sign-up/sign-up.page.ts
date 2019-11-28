@@ -2,7 +2,9 @@ import { ConfirmPage } from './../confirm/confirm.page';
 import { Component, OnInit } from '@angular/core';
 import { ToastController, ModalController } from '@ionic/angular';
 import { AuthService } from '../auth.service';
+import { AuthFormValidatorsService } from '../auth-form-validators.service';
 import { Router } from '@angular/router';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-signup',
@@ -10,34 +12,36 @@ import { Router } from '@angular/router';
   styleUrls: ['./sign-up.page.scss'],
 })
 export class SignUpPage implements OnInit {
-  username: string;
-  password: string;
-  email: string;
-  error: string;
+  credentials: object;
   message: string;
-  credentials: any;
+  error: string;
+  form: FormGroup;
+  formErrors = AuthFormValidatorsService.formErrors;
   constructor(public modalController: ModalController, private router: Router,
-              public toastController: ToastController , private authService: AuthService) { }
+              public toastController: ToastController , private authService: AuthService,
+              private authFormValidatorsService: AuthFormValidatorsService, ) { }
 
   ngOnInit() {
+    this.form = this.authFormValidatorsService.form;
   }
 
-  private setError(msg) {
-    this.error = msg;
-    this.message = null;
- }
+  private setError(msg: string) {
+      this.error = msg;
+      this.message = null;
+  }
+
+  private setMessage(msg: string) {
+      this.message = msg;
+      this.error = null;
+  }
 
   signUp() {
-    this.credentials = {
-      username: this.email,
-      password: this.password,
-      email: this.email,
-    };
+    this.credentials = this.form.value;
     this.authService.register(this.credentials).subscribe(user => {
       this.presentModal();
     }, error => {
       this.setError(error.message);
-      this.presentErrorToast();
+      this.presentToast();
     });
   }
 
@@ -53,21 +57,13 @@ export class SignUpPage implements OnInit {
     return await modal.present();
   }
 
-async presentErrorToast() {
-  const toast = await this.toastController.create({
-    message: this.error,
-    color: 'danger',
-    duration: 2000
-  });
-  toast.present();
-}
-
-async presentToast() {
-  const toast = await this.toastController.create({
-    message: 'Confirmmation successfull!',
-    duration: 2000
-  });
-  toast.present();
-}
+  async presentToast() {
+    const toast = await this.toastController.create({
+      message: this.error,
+      color: 'danger',
+      duration: 2000
+    });
+    toast.present();
+  }
 
 }

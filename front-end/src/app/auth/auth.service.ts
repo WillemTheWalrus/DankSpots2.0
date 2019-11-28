@@ -60,7 +60,6 @@ export class AuthService {
     json.Logins[key] = token;
     const creds = new AWS.CognitoIdentityCredentials({
       Logins : {
-          // Change the key below according to the specific region your user pool is in.
          key : token
       },
       IdentityPoolId: this.config.identityPool,
@@ -79,14 +78,13 @@ export class AuthService {
   }
 
   private authDetails(creds): AuthenticationDetails {
-    return new AuthenticationDetails({Username: creds.username, Password: creds.password});
+    return new AuthenticationDetails({ Username: creds.username, Password: creds.password });
   }
 
   private refreshSession(): Promise<CognitoUserSession> {
     return new Promise ((resolve, reject) => {
       this._cognitoUser.getSession((err, session) => {
         if (err) { console.log('Error refreshing user session', err); return reject(err); }
-        console.log(`${new Date()} - Refreshed session for ${this._cognitoUser.getUsername()}. Valid?: `, session.isValid());
         this.saveCreds(session);
         resolve(session);
       });
@@ -94,13 +92,13 @@ export class AuthService {
   }
 
   private resetCreds(clearCache: boolean = false) {
-    console.log('Resetting credentials for unauth access');
     AWS.config.region = this.config.region;
     this._cognitoUser = null;
     this.unauthCreds = this.unauthCreds || new AWS.CognitoIdentityCredentials({ IdentityPoolId: this.config.identityPool });
-    if (clearCache){ this.unauthCreds.clearCachedId(); }
+    if (clearCache) { this.unauthCreds.clearCachedId(); }
     this.setCredentials(this.unauthCreds);
   }
+
  // Used for custom attributes
   private buildAttributes(creds): Array<CognitoUserAttribute> {
     const attributeEmail = new CognitoUserAttribute({Name: 'email', Value: creds.email});
@@ -166,7 +164,6 @@ export class AuthService {
     return Observable.create(observer => {
       this.userPool.signUp(creds.username, creds.password, this.buildAttributes(creds), null, (err, result) => {
         if (err) { return observer.error(err); }
-        console.log('Register', result);
         observer.next(result.user);
         observer.complete();
       });
@@ -177,13 +174,10 @@ export class AuthService {
   confirm(creds): Observable<CognitoUser> {
     const cognitoUser = this.getNewCognitoUser(creds);
     return Observable.create( observer => {
-      console.log('Confirming...', CognitoUser);
       cognitoUser.confirmRegistration(creds.confcode, true, (err, result) => {
         if (err) { return observer.error(err); }
-        else {
-          observer.next(result.CognitoUser);
-          observer.complete();
-        }
+        observer.next(result.CognitoUser);
+        observer.complete();
       });
     });
   }

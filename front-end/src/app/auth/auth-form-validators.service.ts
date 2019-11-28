@@ -9,38 +9,43 @@ import { each, omit } from 'lodash-es/';
 export class AuthFormValidatorsService {
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
-      username: ['', Validators.required],
-      password: ['', [Validators.required]],
+      username: ['dirtymuzz@gmail.com', Validators.required],
+      password: ['11111111', [Validators.required]],
+      email: ['dirtymuzz@gmail.com', Validators.email]
     });
     this.form.valueChanges.pipe(
       debounceTime(200)
     ).subscribe(() => this.updateErrorMessages());
   }
 
-  static loginFormErrors = {
+  static formErrors = {
     username: '',
     password: '',
+    email: '',
   };
-  static loginValidationMessages = {
+  static validationMessages = {
     username: {
       required: 'Username is required.'
     },
     password: {
       required: 'Password is required.',
     },
+    email: {
+      required: 'Email is required',
+    }
   };
   form: FormGroup;
 
   private updateErrorMessages() {
     const form = this.form;
-    each(omit(AuthFormValidatorsService.loginFormErrors, ''), (msg, field) => {
-      AuthFormValidatorsService.loginFormErrors[field] = '';
+    each(omit(AuthFormValidatorsService.formErrors, ''), (msg, field) => {
+      AuthFormValidatorsService.formErrors[field] = '';
       const control = form.get(field);
 
       if (control && control.dirty && !control.valid) {
-        const messages = AuthFormValidatorsService.loginValidationMessages[field];
+        const messages = AuthFormValidatorsService.validationMessages[field];
         each(control.errors, (val, key) => {
-          AuthFormValidatorsService.loginFormErrors[field] = messages[key];
+          AuthFormValidatorsService.formErrors[field] = messages[key];
         });
       }
     });
