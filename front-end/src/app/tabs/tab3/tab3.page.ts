@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ThemeService } from './../../../theme/theme.service';
 import { AuthService } from '../../auth/auth.service';
 
 @Component({
@@ -8,13 +9,19 @@ import { AuthService } from '../../auth/auth.service';
 })
 export class Tab3Page implements OnInit {
   darkTheme: boolean;
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private themeService: ThemeService) { }
 
   ngOnInit() {
+    this.themeService.isThemeDark.subscribe(
+      (isDark: boolean) => {
+        this.darkTheme = isDark;
+        document.body.classList.toggle('dark', this.darkTheme);
+      }
+    );
   }
 
   toggleTheme(ev: any) {
-    this.darkTheme = ev.target.checked;
+    this.themeService.isThemeDark.next(ev.target.checked);
   }
 
   deleteAccount() {}
