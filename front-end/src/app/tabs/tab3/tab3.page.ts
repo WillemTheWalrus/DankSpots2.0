@@ -15,12 +15,12 @@ export class Tab3Page implements OnInit {
     this.themeService.isThemeDark.subscribe(
       (isDark: boolean) => {
         this.darkTheme = isDark;
-        document.body.classList.toggle('dark', this.darkTheme);
       }
     );
   }
 
   toggleTheme(ev: any) {
+    this.darkTheme = ev;
     this.themeService.isThemeDark.next(ev.target.checked);
   }
 

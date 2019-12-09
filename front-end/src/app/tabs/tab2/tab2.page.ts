@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, ToastController } from '@ionic/angular';
 import { Map, latLng, tileLayer , marker, icon } from 'leaflet';
 import { AddSpotModalModalPage } from './add-spot-modal/add-spot-modal.page';
 import { CognitoUser } from 'amazon-cognito-identity-js';
@@ -30,11 +30,15 @@ export class Tab2Page {
   user: CognitoUser;
   userLocation: latLng;
   icon: any;
+  message: string;
   // ToDo: make a spots and spot DTO
   spotsData: any;
 
-  constructor(private modalController: ModalController, private spotsService: SpotsService,
-              private geolocation: Geolocation) {
+  constructor(private modalController: ModalController,
+              private spotsService: SpotsService,
+              private geolocation: Geolocation,
+              private toastController: ToastController,
+    ) {
   }
 
   ionViewDidEnter() {
@@ -46,6 +50,10 @@ export class Tab2Page {
   // Remove map when we have multiple map objects
   ionViewWillLeave() {
     this.map.remove();
+  }
+
+  private setMessage(msg: string) {
+    this.message = msg;
   }
 
   leafletMap() {
@@ -63,14 +71,8 @@ export class Tab2Page {
   async addADankSpot(pressedLocation) {
 
     // If dropping a pin, use press location.  Otherwise default to current map's center
-    const spotLocation = pressedLocation ? pressedLocation : this.map.getCenter();
-
-    // Create marker and add to the map
-    marker(spotLocation, {draggable: true, icon: iconDefault})
-    .addTo(this.map).bindPopup('New Dank Spot').openPopup()
-    .on('click dragend', ev => {
-      this.presentModal();
-    });
+    const newSpotLocation = pressedLocation ? pressedLocation : this.map.getCenter();
+    this.presentModal(newSpotLocation);
   }
 
   getGeoLocation() {
@@ -106,9 +108,38 @@ export class Tab2Page {
     );
   }
 
-  async presentModal() {
-    const modal = await this.modalController.create({component: AddSpotModalModalPage});
+  async presentModal(newSpotLocation: any) {
+    const modal = await this.modalController.create(
+      {
+        component: AddSpotModalModalPage,
+        componentProps: {
+          newSpotLocation
+        }
+      }
+    );
+    modal.onDidDismiss().then((dataReturned: any) => {
+      if (dataReturned.data) {
+        this.setMessage('New Spot Added');
+        // Create marker and add to the map
+        marker(dataReturned.data.newSpotLocation, {icon: iconDefault})
+        .addTo(this.map).bindPopup(dataReturned.data.name).openPopup()
+        .on('click dragend', ev => {
+          console.log('titties');
+        });
+      }
+      this.presentToast();
+    });
     return await modal.present();
+  }
+
+  async presentToast() {
+    const toast = await this.toastController.create({
+      message: this.message,
+      color: 'success',
+      showCloseButton: true,
+      duration: 5000
+    });
+    toast.present();
   }
 
 }

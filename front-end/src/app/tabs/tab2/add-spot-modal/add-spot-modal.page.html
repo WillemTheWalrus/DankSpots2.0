@@ -10,11 +10,18 @@
 </ion-header>
 
 <ion-content padding>
-  <ion-grid>
-    <ion-row>
-      <ion-col text-center>
-        <ion-input type="text" placeholder="New Dank Spot"></ion-input>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+    <form [formGroup]="form">
+        <ion-grid>
+            <ion-row>
+              <ion-col text-center>
+                <ion-input type="text" placeholder="spot name" formControlName="name"></ion-input>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col text-center>
+                <ion-button color="new" expand="full" (click)="closeModal()">Add Spot</ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+    </form>
 </ion-content>
