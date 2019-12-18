@@ -10,6 +10,7 @@ import { HttpClient, HttpHeaders} from '@angular/common/http';
 })
 export class SpotsService {
   user: any;
+  spotsData: any;
   constructor(private http: HttpClient, private authService: AuthService) { }
   getSpots() {
     this.user = this.authService.cognitoUser;
@@ -22,8 +23,13 @@ export class SpotsService {
     };
     const getSpots = this.http.get(`${environment.baseApi}/spot`, httpOptions );
     return getSpots.pipe(map(data => {
+      this.spotsData = data;
       return data;
     })
     , catchError(error => observableThrowError(error)));
   }
+
+  saveSpot() {
+  }
+
 }

@@ -11,9 +11,6 @@ export class SpinnerInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const spinner = this.injector.get(SpinnerService);
-    // if (!req.url.includes('CheckUserTimeout')) {
-    //   spinner.start();
-    // }
     spinner.start();
 
     return next.handle(req).pipe(

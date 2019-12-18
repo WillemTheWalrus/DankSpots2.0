@@ -14,12 +14,29 @@
         <ion-grid>
             <ion-row>
               <ion-col text-center>
-                <ion-input type="text" placeholder="spot name" formControlName="name"></ion-input>
+                <ion-input type="text" placeholder="Spot Name" formControlName="name"></ion-input>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+                <ion-col text-center>
+                  <ion-textarea rows="4" placeholder="Enter any description here..."></ion-textarea>
+                </ion-col>
+              </ion-row>
+            <ion-row>
+              <ion-col text-center>
+                <ion-card (click)="presentActionSheet()">
+                  <ion-card-header>
+                    <ion-card-title>Upload Image(s)</ion-card-title>
+                  </ion-card-header>
+                  <ion-card-content>
+                    <ion-icon class="uploadImageIcon" name="cloud-upload"></ion-icon>
+                  </ion-card-content>
+                </ion-card>
               </ion-col>
             </ion-row>
             <ion-row>
               <ion-col text-center>
-                <ion-button color="new" expand="full" (click)="closeModal()">Add Spot</ion-button>
+                <ion-button color="new" expand="full"  (click)="closeModal()">Add Spot</ion-button>
               </ion-col>
             </ion-row>
           </ion-grid>

@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Tab2Page } from './tab2.page';
 import { AddSpotModalModalPage } from './add-spot-modal/add-spot-modal.page';
+import { MarkerPopoverComponent } from './marker-popover/marker-popover.component';
 
 @NgModule({
   imports: [
@@ -16,7 +17,7 @@ import { AddSpotModalModalPage } from './add-spot-modal/add-spot-modal.page';
       { path: '', component: Tab2Page },
   ])
   ],
-  declarations: [Tab2Page, AddSpotModalModalPage],
-  entryComponents: [AddSpotModalModalPage]
+  declarations: [Tab2Page, AddSpotModalModalPage, MarkerPopoverComponent],
+  entryComponents: [AddSpotModalModalPage, MarkerPopoverComponent]
 })
 export class Tab2PageModule {}

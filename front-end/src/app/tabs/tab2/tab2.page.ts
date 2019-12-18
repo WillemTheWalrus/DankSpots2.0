@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, Injector, ComponentFactoryResolver, ApplicationRef, NgZone, ComponentRef } from '@angular/core';
 import { ModalController, ToastController } from '@ionic/angular';
-import { Map, latLng, tileLayer , marker, icon } from 'leaflet';
+import { Map, latLng, tileLayer , marker, icon, popup} from 'leaflet';
 import { AddSpotModalModalPage } from './add-spot-modal/add-spot-modal.page';
 import { CognitoUser } from 'amazon-cognito-identity-js';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { SpotsService } from './spots.service';
+import { MarkerPopoverComponent } from './marker-popover/marker-popover.component';
 
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
 const iconUrl = 'assets/marker-icon.png';
@@ -33,11 +34,17 @@ export class Tab2Page {
   message: string;
   // ToDo: make a spots and spot DTO
   spotsData: any;
+  compRef: ComponentRef<MarkerPopoverComponent>;
+  popoverContent: any;
 
   constructor(private modalController: ModalController,
               private spotsService: SpotsService,
               private geolocation: Geolocation,
               private toastController: ToastController,
+              private injector: Injector,
+              private resolver: ComponentFactoryResolver,
+              private appRef: ApplicationRef,
+              private zone: NgZone
     ) {
   }
 
@@ -96,17 +103,48 @@ export class Tab2Page {
         return { ...item, point: JSON.parse(item.geoJson) };
       });
       spots.forEach(spot => {
-        const markerOptions =  { dragable: true, icon: iconDefault, ...spot };
-        const myMarker = marker([spot.point.coordinates[1], spot.point.coordinates[0]], markerOptions );
-        myMarker.addTo(this.map).bindPopup(spot.spotName).on('click', ev => {
+        const popoverContent = popup();
+        const markerOptions =  { dragable: true, icon: iconDefault, spot };
+        const newMarker = marker([spot.point.coordinates[1], spot.point.coordinates[0]], markerOptions );
+        newMarker.addTo(this.map);
+        newMarker.on('click', ev => {
            const clickedSpot = ev.target.options.spot;
            // set pop up content for the popover
+           // we need to run it in angular2 zone
+           this.zone.run(() => {
+              if (this.compRef) {
+                this.compRef.destroy();
+              }
+
+              // creation component, MarkerPopoverComponent should be declared in entryComponents
+              const compFactory = this.resolver.resolveComponentFactory(MarkerPopoverComponent);
+              this.compRef = compFactory.create(this.injector);
+
+              // parent-child communication
+              this.compRef.instance.clickedSpot = clickedSpot;
+              // may need a subscription for button click events
+              // const subscription = this.compRef.instance.tbd.subscribe(x => { this.tbd = x; });
+
+              const div = document.createElement('div');
+              div.appendChild(this.compRef.location.nativeElement);
+              popoverContent.setContent(div);
+
+              // it's necessary for change detection within MarkerPopoverComponent
+              this.appRef.attachView(this.compRef.hostView);
+              this.compRef.onDestroy(() => {
+                this.appRef.detachView(this.compRef.hostView);
+                // subscription.unsubscribe();
+              });
+            });
         });
+        newMarker.bindPopup(popoverContent, { keepInView: true });
       });
     },
       (error) => {console.log(error); }
     );
   }
+
+  addMarker() {}
 
   async presentModal(newSpotLocation: any) {
     const modal = await this.modalController.create(
@@ -122,7 +160,7 @@ export class Tab2Page {
         this.setMessage('New Spot Added');
         // Create marker and add to the map
         marker(dataReturned.data.newSpotLocation, {icon: iconDefault})
-        .addTo(this.map).bindPopup(dataReturned.data.name).openPopup()
+        .addTo(this.map).bindPopup(dataReturned.data.name)
         .on('click dragend', ev => {
           console.log('titties');
         });

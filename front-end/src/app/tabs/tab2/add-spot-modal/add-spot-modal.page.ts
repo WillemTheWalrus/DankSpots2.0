@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, ActionSheetController } from '@ionic/angular';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 
@@ -10,7 +10,8 @@ import { debounceTime } from 'rxjs/operators';
 })
 export class AddSpotModalModalPage implements OnInit {
   // toDo: move to shared module
-  constructor( private modalController: ModalController, private fb: FormBuilder) { }
+  constructor( private modalController: ModalController, private fb: FormBuilder,
+               private actionSheetController: ActionSheetController) { }
   @Input() newSpotLocation: any;
   form: FormGroup;
 
@@ -36,6 +37,33 @@ export class AddSpotModalModalPage implements OnInit {
 
   async close() {
     await this.modalController.dismiss();
+  }
+
+  async presentActionSheet() {
+    const actionSheet = await this.actionSheetController.create({
+      header: 'Choose Image Source',
+      buttons: [{
+        text: 'Camera Roll',
+        icon: 'albums',
+        handler: () => {
+          console.log('Albums clicked');
+        }
+      }, {
+        text: 'Camera',
+        icon: 'camera',
+        handler: () => {
+          console.log('Camera clicked');
+        }
+      }, {
+        text: 'Cancel',
+        icon: 'close',
+        role: 'cancel',
+        handler: () => {
+          console.log('Cancel clicked');
+        }
+      }]
+    });
+    await actionSheet.present();
   }
 
 }
