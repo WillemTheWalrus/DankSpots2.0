@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-marker-popover',
@@ -7,8 +7,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MarkerPopoverComponent implements OnInit {
   clickedSpot: any;
+  onMoreDetialsClick = new EventEmitter();
   constructor() { }
 
   ngOnInit() {}
+
+  moreDetailsClick() {
+    this.onMoreDetialsClick.emit({open: true, spot: this.clickedSpot});
+  }
 
 }

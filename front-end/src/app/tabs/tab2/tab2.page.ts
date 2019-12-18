@@ -110,7 +110,7 @@ export class Tab2Page {
         newMarker.on('click', ev => {
            const clickedSpot = ev.target.options.spot;
            // set pop up content for the popover
-           // we need to run it in angular2 zone
+           // we need to run it in angular zone
            this.zone.run(() => {
               if (this.compRef) {
                 this.compRef.destroy();
@@ -122,9 +122,13 @@ export class Tab2Page {
 
               // parent-child communication
               this.compRef.instance.clickedSpot = clickedSpot;
-              // may need a subscription for button click events
-              // const subscription = this.compRef.instance.tbd.subscribe(x => { this.tbd = x; });
 
+              // subscription for button click events using event emitter
+              const subscription = this.compRef.instance.onMoreDetialsClick.subscribe((data: any) => {
+                 alert(`This will eventually open more detials modal for ${data.spot.spotName}`);
+              });
+
+              // set inner popup content bound to marker
               const div = document.createElement('div');
               div.appendChild(this.compRef.location.nativeElement);
               popoverContent.setContent(div);
@@ -133,7 +137,7 @@ export class Tab2Page {
               this.appRef.attachView(this.compRef.hostView);
               this.compRef.onDestroy(() => {
                 this.appRef.detachView(this.compRef.hostView);
-                // subscription.unsubscribe();
+                subscription.unsubscribe();
               });
             });
         });
@@ -143,8 +147,6 @@ export class Tab2Page {
       (error) => {console.log(error); }
     );
   }
-
-  addMarker() {}
 
   async presentModal(newSpotLocation: any) {
     const modal = await this.modalController.create(
@@ -161,7 +163,7 @@ export class Tab2Page {
         // Create marker and add to the map
         marker(dataReturned.data.newSpotLocation, {icon: iconDefault})
         .addTo(this.map).bindPopup(dataReturned.data.name)
-        .on('click dragend', ev => {
+        .on('click', ev => {
           console.log('titties');
         });
       }
