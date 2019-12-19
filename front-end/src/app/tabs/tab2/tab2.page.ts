@@ -1,6 +1,8 @@
+import * as L from 'leaflet';
+import 'leaflet.markercluster';
 import { Component, Injector, ComponentFactoryResolver, ApplicationRef, NgZone, ComponentRef } from '@angular/core';
 import { ModalController, ToastController } from '@ionic/angular';
-import { Map, latLng, tileLayer , marker, icon, popup} from 'leaflet';
+import { map, latLng, tileLayer, marker, icon, popup} from 'leaflet';
 import { AddSpotModalModalPage } from './add-spot-modal/add-spot-modal.page';
 import { CognitoUser } from 'amazon-cognito-identity-js';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
@@ -27,15 +29,16 @@ const iconDefault = icon({
   styleUrls: ['tab2.page.scss']
 })
 export class Tab2Page {
-  map: Map;
+  map: any;
   user: CognitoUser;
-  userLocation: latLng;
+  userLocation: any;
   icon: any;
   message: string;
   // ToDo: make a spots and spot DTO
   spotsData: any;
   compRef: ComponentRef<MarkerPopoverComponent>;
   popoverContent: any;
+  markers: any;
 
   constructor(private modalController: ModalController,
               private spotsService: SpotsService,
@@ -49,9 +52,9 @@ export class Tab2Page {
   }
 
   ionViewDidEnter() {
-    this.leafletMap();
     this.getGeoLocation();
     this.getSpots();
+    this.leafletMap();
   }
 
   // Remove map when we have multiple map objects
@@ -65,9 +68,10 @@ export class Tab2Page {
 
   leafletMap() {
     // Initialize Leaflet map
-    this.map = new Map('mapId').setView(latLng(32.7157, -117.1611), 10); // default to San Diego
-    tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+    this.map = map('mapId').setView(latLng(32.7157, -117.1611), 10); // default to San Diego
+    tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     }).addTo(this.map);
+    this.map.addLayer(this.markers);
 
     // Bind map press event for dropping a pin
     this.map.on('contextmenu', e => {
@@ -97,16 +101,17 @@ export class Tab2Page {
   }
 
   getSpots() {
-    this.spotsService.getSpots().subscribe((data: any) => {
-      this.spotsData = data;
-      const spots = data.Items.map(item => {
+    this.markers = L.markerClusterGroup();
+    this.spotsService.getSpots().subscribe((spotsData: any) => {
+      this.spotsData = spotsData;
+      const spots = spotsData.Items.map(item => {
         return { ...item, point: JSON.parse(item.geoJson) };
       });
       spots.forEach(spot => {
         const popoverContent = popup();
         const markerOptions =  { dragable: true, icon: iconDefault, spot };
         const newMarker = marker([spot.point.coordinates[1], spot.point.coordinates[0]], markerOptions );
-        newMarker.addTo(this.map);
+        // newMarker.addTo(this.map);
         newMarker.on('click', ev => {
            const clickedSpot = ev.target.options.spot;
            // set pop up content for the popover
@@ -142,6 +147,7 @@ export class Tab2Page {
             });
         });
         newMarker.bindPopup(popoverContent, { keepInView: true });
+        this.markers.addLayer(newMarker);
       });
     },
       (error) => {console.log(error); }
@@ -161,13 +167,14 @@ export class Tab2Page {
       if (dataReturned.data) {
         this.setMessage('New Spot Added');
         // Create marker and add to the map
-        marker(dataReturned.data.newSpotLocation, {icon: iconDefault})
-        .addTo(this.map).bindPopup(dataReturned.data.name)
-        .on('click', ev => {
+        const addedMarker = marker(dataReturned.data.newSpotLocation, { icon: iconDefault });
+        addedMarker.bindPopup(dataReturned.data.name);
+        addedMarker.on('click', ev => {
           console.log('titties');
         });
+        this.markers.addLayer(addedMarker);
+        this.presentToast();
       }
-      this.presentToast();
     });
     return await modal.present();
   }

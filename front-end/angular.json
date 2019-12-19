@@ -45,7 +45,13 @@
               },
               {
                 "input": "node_modules/leaflet/dist/leaflet.css"
-             }
+              }, 
+              {
+                "input": "node_modules/leaflet.markercluster/dist/MarkerCluster.css"
+              },
+              {
+                "input": "node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css"
+              }
             ],
             "scripts": []
           },
