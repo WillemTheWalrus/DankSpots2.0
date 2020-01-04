@@ -18,6 +18,6 @@ import { MarkerPopoverComponent } from './marker-popover/marker-popover.componen
   ])
   ],
   declarations: [Tab2Page, AddSpotModalModalPage, MarkerPopoverComponent],
-  entryComponents: [AddSpotModalModalPage, MarkerPopoverComponent]
+  entryComponents: [AddSpotModalModalPage, MarkerPopoverComponent],
 })
 export class Tab2PageModule {}

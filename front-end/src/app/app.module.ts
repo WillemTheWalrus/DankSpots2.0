@@ -18,10 +18,10 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
   entryComponents: [],
   imports: [
     BrowserModule,
+    HttpClientModule,
     IonicModule.forRoot(),
     SharedModule,
     AppRoutingModule,
-    HttpClientModule,
   ],
   providers: [
     StatusBar,

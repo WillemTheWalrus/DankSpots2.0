@@ -113,7 +113,6 @@ export class Tab2Page {
         const newMarker = marker([spot.point.coordinates[1], spot.point.coordinates[0]], markerOptions );
         // newMarker.addTo(this.map);
         newMarker.on('click', ev => {
-           const clickedSpot = ev.target.options.spot;
            // set pop up content for the popover
            // we need to run it in angular zone
            this.zone.run(() => {
@@ -125,8 +124,13 @@ export class Tab2Page {
               const compFactory = this.resolver.resolveComponentFactory(MarkerPopoverComponent);
               this.compRef = compFactory.create(this.injector);
 
+
               // parent-child communication
-              this.compRef.instance.clickedSpot = clickedSpot;
+              this.spotsService.getDog().subscribe((data: any) => {
+                this.compRef.instance.dogImg = data.message;
+                const clickedSpot = ev.target.options.spot;
+                this.compRef.instance.clickedSpot = clickedSpot;
+              });
 
               // subscription for button click events using event emitter
               const subscription = this.compRef.instance.onMoreDetialsClick.subscribe((data: any) => {

@@ -1,9 +1,6 @@
 <div class="popover" text-center>
-  <h5>
-    {{clickedSpot.spotName}}
-  </h5>
-  <p>
-    {{clickedSpot.point | json}}
-  </p>
+  <h5>{{clickedSpot.spotName}}</h5>
+  <img class="image" [src]="dogImg" />
+  <p>{{clickedSpot.point.coordinates}}</p>
   <ion-button color="primary" (click)="moreDetailsClick()">More Details</ion-button>  
 </div>
