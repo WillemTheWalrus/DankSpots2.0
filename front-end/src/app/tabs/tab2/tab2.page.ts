@@ -126,15 +126,12 @@ export class Tab2Page {
 
 
               // parent-child communication
-              this.spotsService.getDog().subscribe((data: any) => {
-                this.compRef.instance.dogImg = data.message;
-                const clickedSpot = ev.target.options.spot;
-                this.compRef.instance.clickedSpot = clickedSpot;
-              });
+              const clickedSpot = ev.target.options.spot;
+              this.compRef.instance.clickedSpot = clickedSpot;
 
               // subscription for button click events using event emitter
               const subscription = this.compRef.instance.onMoreDetialsClick.subscribe((data: any) => {
-                 alert(`This will eventually open more detials modal for ${data.spot.spotName}`);
+                  console.log(data);
               });
 
               // set inner popup content bound to marker

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment.dev';
 import {throwError as observableThrowError, Observable, of} from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
@@ -18,11 +17,10 @@ export class SpotsService {
     const httpOptions = {
       headers: new HttpHeaders({
         Authorization: token,
-        'Access-Control-Allow-Origin': 'http://localhost:8100',
       })
     };
-    const getSpots = this.http.get(`${environment.baseApi}/spot`, httpOptions );
-    return getSpots.pipe(map(data => {
+    return this.http.get('/Prod/spot', httpOptions )
+    .pipe(map(data => {
       this.spotsData = data;
       return data;
     })
