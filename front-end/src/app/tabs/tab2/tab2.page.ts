@@ -10,11 +10,32 @@ import { SpotsService } from './spots.service';
 import { MarkerPopoverComponent } from './marker-popover/marker-popover.component';
 
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
-const iconUrl = 'assets/marker-icon.png';
-const shadowUrl = 'assets/marker-shadow.png';
+const iconUrl = 'assets/leaf-green.png';
+const shadowUrl = 'assets/leaf-shadow.png';
 const iconDefault = icon({
   iconRetinaUrl,
   iconUrl,
+  shadowUrl,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  tooltipAnchor: [16, -28],
+  shadowSize: [41, 41]
+});
+
+const redIcon = icon({
+  iconRetinaUrl,
+  iconUrl: 'assets/leaf-red.png',
+  shadowUrl,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  tooltipAnchor: [16, -28],
+  shadowSize: [41, 41]
+});
+const orangeIcon = icon({
+  iconRetinaUrl,
+  iconUrl: 'assets/leaf-orange.png',
   shadowUrl,
   iconSize: [25, 41],
   iconAnchor: [12, 41],
@@ -168,7 +189,8 @@ export class Tab2Page {
       if (dataReturned.data) {
         this.setMessage('New Spot Added');
         // Create marker and add to the map
-        const addedMarker = marker(dataReturned.data.newSpotLocation, { icon: iconDefault });
+        // toDo:  generate the new icon like I do the spots coming from the server
+        const addedMarker = marker(dataReturned.data.newSpotLocation, { icon: redIcon });
         addedMarker.bindPopup(dataReturned.data.name);
         addedMarker.on('click', ev => {
           console.log('titties');
