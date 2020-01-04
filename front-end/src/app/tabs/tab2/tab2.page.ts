@@ -109,7 +109,7 @@ export class Tab2Page {
       });
       spots.forEach(spot => {
         const popoverContent = popup();
-        const markerOptions =  { dragable: true, icon: iconDefault, spot };
+        const markerOptions =  { dragable: true, keepInView: true	, icon: iconDefault, spot };
         const newMarker = marker([spot.point.coordinates[1], spot.point.coordinates[0]], markerOptions );
         // newMarker.addTo(this.map);
         newMarker.on('click', ev => {
