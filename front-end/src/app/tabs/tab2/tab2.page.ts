@@ -1,6 +1,6 @@
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
-import { Component, Injector, ComponentFactoryResolver, ApplicationRef, NgZone, ComponentRef } from '@angular/core';
+import { Component, Injector, ComponentFactoryResolver, ApplicationRef, NgZone, ComponentRef, OnInit } from '@angular/core';
 import { ModalController, ToastController } from '@ionic/angular';
 import { map, latLng, tileLayer, marker, icon, popup} from 'leaflet';
 import { AddSpotModalModalPage } from './add-spot-modal/add-spot-modal.page';
@@ -8,10 +8,11 @@ import { CognitoUser } from 'amazon-cognito-identity-js';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { SpotsService } from './spots.service';
 import { MarkerPopoverComponent } from './marker-popover/marker-popover.component';
+import { ActivatedRoute } from '@angular/router';
 
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
-const iconUrl = 'assets/leaf-green.png';
-const shadowUrl = 'assets/leaf-shadow.png';
+const iconUrl = 'assets/marker-icon.png';
+const shadowUrl = 'assets/marker-shadow.png';
 const iconDefault = icon({
   iconRetinaUrl,
   iconUrl,
@@ -23,10 +24,21 @@ const iconDefault = icon({
   shadowSize: [41, 41]
 });
 
+const greenIcon = icon({
+  iconRetinaUrl,
+  iconUrl: 'assets/leaf-green.png',
+  shadowUrl: 'assets/leaf-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  tooltipAnchor: [16, -28],
+  shadowSize: [41, 41]
+});
+
 const redIcon = icon({
   iconRetinaUrl,
   iconUrl: 'assets/leaf-red.png',
-  shadowUrl,
+  shadowUrl: 'assets/leaf-shadow.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
@@ -36,7 +48,7 @@ const redIcon = icon({
 const orangeIcon = icon({
   iconRetinaUrl,
   iconUrl: 'assets/leaf-orange.png',
-  shadowUrl,
+  shadowUrl: 'assets/leaf-shadow.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
@@ -49,10 +61,11 @@ const orangeIcon = icon({
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss']
 })
-export class Tab2Page {
+export class Tab2Page implements OnInit {
   map: any;
   user: CognitoUser;
   userLocation: any;
+  userLocationMarker: any;
   icon: any;
   message: string;
   // ToDo: make a spots and spot DTO
@@ -68,14 +81,20 @@ export class Tab2Page {
               private injector: Injector,
               private resolver: ComponentFactoryResolver,
               private appRef: ApplicationRef,
-              private zone: NgZone
+              private zone: NgZone,
+              private ar: ActivatedRoute
     ) {
   }
 
+  ngOnInit() {
+    this.ar.params.subscribe((params) => {
+      this.getSpots();
+    });
+  }
+
   ionViewDidEnter() {
-    this.getGeoLocation();
-    this.getSpots();
     this.leafletMap();
+    this.getGeoLocation();
   }
 
   // Remove map when we have multiple map objects
@@ -95,13 +114,12 @@ export class Tab2Page {
     this.map.addLayer(this.markers);
 
     // Bind map press event for dropping a pin
-    this.map.on('contextmenu', e => {
-      this.addADankSpot(e.latlng);
-  });
+    this.map.on('click', ev => {
+      this.addADankSpot(ev.latlng);
+    });
   }
 
   async addADankSpot(pressedLocation) {
-
     // If dropping a pin, use press location.  Otherwise default to current map's center
     const newSpotLocation = pressedLocation ? pressedLocation : this.map.getCenter();
     this.presentModal(newSpotLocation);
@@ -110,15 +128,12 @@ export class Tab2Page {
   getGeoLocation() {
     this.geolocation.getCurrentPosition().then((resp) => {
       this.userLocation = latLng(resp.coords.latitude, resp.coords.longitude);
-      // this.map.setView(this.userLocation, 10);
+      this.map.setView(this.userLocation, 10);
+      this.userLocationMarker = marker(this.userLocation, { icon: iconDefault } ).bindPopup('this is your location');
+      this.map.addLayer(this.userLocationMarker);
     }).catch((error) => {
       console.log('Error getting location', error);
     });
-    const watch = this.geolocation.watchPosition();
-    watch.subscribe((data) => {
-      this.userLocation = latLng(data.coords.latitude, data.coords.longitude);
-    });
-
   }
 
   getSpots() {
@@ -130,7 +145,7 @@ export class Tab2Page {
       });
       spots.forEach(spot => {
         const popoverContent = popup();
-        const markerOptions =  { dragable: true, keepInView: true	, icon: iconDefault, spot };
+        const markerOptions =  { dragable: true, keepInView: true	, icon: greenIcon, spot };
         const newMarker = marker([spot.point.coordinates[1], spot.point.coordinates[0]], markerOptions );
         // newMarker.addTo(this.map);
         newMarker.on('click', ev => {
@@ -148,7 +163,10 @@ export class Tab2Page {
 
               // parent-child communication
               const clickedSpot = ev.target.options.spot;
+              const originCoords = clickedSpot.point.coordinates;
+              const destinationCoords = [this.userLocation.lng, this.userLocation.lat];
               this.compRef.instance.clickedSpot = clickedSpot;
+              this.compRef.instance.distanceTo = this.toMiles(this.getDistance(originCoords, destinationCoords));
 
               // subscription for button click events using event emitter
               const subscription = this.compRef.instance.onMoreDetialsClick.subscribe((data: any) => {
@@ -174,6 +192,31 @@ export class Tab2Page {
     },
       (error) => {console.log(error); }
     );
+  }
+
+  getDistance(origin: Array<number>, destination: Array<number>) {
+    // return distance in meters
+    // fuck ya math!
+    const lon1 = this.toRadian(origin[1]),
+        lat1 = this.toRadian(origin[0]),
+        lon2 = this.toRadian(destination[1]),
+        lat2 = this.toRadian(destination[0]);
+
+    const deltaLat = lat2 - lat1;
+    const deltaLon = lon2 - lon1;
+
+    const a = Math.pow(Math.sin(deltaLat / 2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(deltaLon / 2), 2);
+    const c = 2 * Math.asin(Math.sqrt(a));
+    const EARTH_RADIUS = 6371;
+    return c * EARTH_RADIUS * 1000;
+  }
+
+  toRadian(degree: any) {
+      return degree * Math.PI / 180;
+  }
+
+  toMiles(meters: number) {
+    return (meters * 0.000621371192).toFixed(2);
   }
 
   async presentModal(newSpotLocation: any) {

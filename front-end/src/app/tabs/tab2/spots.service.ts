@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {throwError as observableThrowError, Observable, of} from 'rxjs';
+import {throwError as observableThrowError, Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { HttpClient, HttpHeaders} from '@angular/common/http';
@@ -27,15 +27,12 @@ export class SpotsService {
     , catchError(error => observableThrowError(error)));
   }
 
+  saveSpot() {}
+
+  loadSpot() {}
+
   getDog() {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        Accept: 'application/json'
-      }),
-      withCredentials: true,
-    };
-    return this.http.get('/api/breeds/image/random', httpOptions )
+    return this.http.get('/api/breeds/image/random')
     .pipe(
       map(data => data),
       catchError(this.handleError('jsonpTest', 'ERROR')),

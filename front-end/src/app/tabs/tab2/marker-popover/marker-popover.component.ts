@@ -8,6 +8,7 @@ import { Component, OnInit, EventEmitter } from '@angular/core';
 })
 export class MarkerPopoverComponent implements OnInit {
   clickedSpot: any;
+  distanceTo: string;
   dogImg: string;
   onMoreDetialsClick = new EventEmitter();
   constructor(private spotsService: SpotsService) { }

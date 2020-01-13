@@ -24,12 +24,17 @@
               </ion-row>
             <ion-row>
               <ion-col text-center>
-                <ion-card (click)="presentActionSheet()">
+                <ion-card (click)="presentActionSheet()" *ngIf="!image">
                   <ion-card-header>
                     <ion-card-title>Upload Image(s)</ion-card-title>
                   </ion-card-header>
                   <ion-card-content>
                     <ion-icon class="uploadImageIcon" name="cloud-upload"></ion-icon>
+                  </ion-card-content>
+                </ion-card>
+                <ion-card *ngIf="image">
+                  <ion-card-content>
+                  <img [src]="image" />
                   </ion-card-content>
                 </ion-card>
               </ion-col>
