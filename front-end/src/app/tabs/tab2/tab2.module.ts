@@ -1,6 +1,6 @@
 import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Tab2Page } from './tab2.page';
@@ -19,5 +19,6 @@ import { MarkerPopoverComponent } from './marker-popover/marker-popover.componen
   ],
   declarations: [Tab2Page, AddSpotModalModalPage, MarkerPopoverComponent],
   entryComponents: [AddSpotModalModalPage, MarkerPopoverComponent],
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
 })
 export class Tab2PageModule {}

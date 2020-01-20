@@ -3,13 +3,13 @@ import {throwError as observableThrowError, Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { HttpClient, HttpHeaders} from '@angular/common/http';
+import { Spot } from 'src/app/shared/dtos/spot';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SpotsService {
   user: any;
-  spotsData: any;
   constructor(private http: HttpClient, private authService: AuthService) { }
   getSpots() {
     this.user = this.authService.cognitoUser;
@@ -20,9 +20,10 @@ export class SpotsService {
       })
     };
     return this.http.get('/Prod/spot', httpOptions )
-    .pipe(map(data => {
-      this.spotsData = data;
-      return data;
+    .pipe(map((data: any) => {
+      return data.Items.map(item => {
+        return new Spot({ ...item, point: JSON.parse(item.geoJson) });
+      });
     })
     , catchError(error => observableThrowError(error)));
   }

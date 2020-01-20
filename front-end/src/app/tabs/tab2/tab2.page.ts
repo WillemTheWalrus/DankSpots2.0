@@ -9,52 +9,9 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { SpotsService } from './spots.service';
 import { MarkerPopoverComponent } from './marker-popover/marker-popover.component';
 import { ActivatedRoute } from '@angular/router';
-
-const iconRetinaUrl = 'assets/marker-icon-2x.png';
-const iconUrl = 'assets/marker-icon.png';
-const shadowUrl = 'assets/marker-shadow.png';
-const iconDefault = icon({
-  iconRetinaUrl,
-  iconUrl,
-  shadowUrl,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  tooltipAnchor: [16, -28],
-  shadowSize: [41, 41]
-});
-
-const greenIcon = icon({
-  iconRetinaUrl,
-  iconUrl: 'assets/leaf-green.png',
-  shadowUrl: 'assets/leaf-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  tooltipAnchor: [16, -28],
-  shadowSize: [41, 41]
-});
-
-const redIcon = icon({
-  iconRetinaUrl,
-  iconUrl: 'assets/leaf-red.png',
-  shadowUrl: 'assets/leaf-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  tooltipAnchor: [16, -28],
-  shadowSize: [41, 41]
-});
-const orangeIcon = icon({
-  iconRetinaUrl,
-  iconUrl: 'assets/leaf-orange.png',
-  shadowUrl: 'assets/leaf-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  tooltipAnchor: [16, -28],
-  shadowSize: [41, 41]
-});
+import { Spot } from 'src/app/shared/dtos/spot';
+import { iconDefault, greenIcon, redIcon  } from 'src/app/shared/constants/spotConstants';
+import { SpotUtilities } from '../../shared/utils/spotUtils';
 
 @Component({
   selector: 'app-tab2',
@@ -68,11 +25,9 @@ export class Tab2Page implements OnInit {
   userLocationMarker: any;
   icon: any;
   message: string;
-  // ToDo: make a spots and spot DTO
-  spotsData: any;
-  compRef: ComponentRef<MarkerPopoverComponent>;
-  popoverContent: any;
+  spots: Array<Spot>;
   markers: any;
+  compRef: ComponentRef<MarkerPopoverComponent>;
 
   constructor(private modalController: ModalController,
               private spotsService: SpotsService,
@@ -87,7 +42,7 @@ export class Tab2Page implements OnInit {
   }
 
   ngOnInit() {
-    this.ar.params.subscribe((params) => {
+    this.ar.params.subscribe(() => {
       this.getSpots();
     });
   }
@@ -119,12 +74,6 @@ export class Tab2Page implements OnInit {
     });
   }
 
-  async addADankSpot(pressedLocation) {
-    // If dropping a pin, use press location.  Otherwise default to current map's center
-    const newSpotLocation = pressedLocation ? pressedLocation : this.map.getCenter();
-    this.presentModal(newSpotLocation);
-  }
-
   getGeoLocation() {
     this.geolocation.getCurrentPosition().then((resp) => {
       this.userLocation = latLng(resp.coords.latitude, resp.coords.longitude);
@@ -138,16 +87,12 @@ export class Tab2Page implements OnInit {
 
   getSpots() {
     this.markers = L.markerClusterGroup();
-    this.spotsService.getSpots().subscribe((spotsData: any) => {
-      this.spotsData = spotsData;
-      const spots = spotsData.Items.map(item => {
-        return { ...item, point: JSON.parse(item.geoJson) };
-      });
-      spots.forEach(spot => {
-        const popoverContent = popup();
+    this.spotsService.getSpots().subscribe((spots: Array<Spot>) => {
+      this.spots = spots;
+      this.spots.forEach(spot => {
+        const popupContent = popup();
         const markerOptions =  { dragable: true, keepInView: true	, icon: greenIcon, spot };
-        const newMarker = marker([spot.point.coordinates[1], spot.point.coordinates[0]], markerOptions );
-        // newMarker.addTo(this.map);
+        const newMarker = marker(spot.point.coordinates, markerOptions );
         newMarker.on('click', ev => {
            // set pop up content for the popover
            // we need to run it in angular zone
@@ -164,9 +109,9 @@ export class Tab2Page implements OnInit {
               // parent-child communication
               const clickedSpot = ev.target.options.spot;
               const originCoords = clickedSpot.point.coordinates;
-              const destinationCoords = [this.userLocation.lng, this.userLocation.lat];
+              const destinationCoords = [this.userLocation.lat, this.userLocation.lng];
               this.compRef.instance.clickedSpot = clickedSpot;
-              this.compRef.instance.distanceTo = this.toMiles(this.getDistance(originCoords, destinationCoords));
+              this.compRef.instance.distanceTo = SpotUtilities.toMiles(SpotUtilities.getDistance(originCoords, destinationCoords));
 
               // subscription for button click events using event emitter
               const subscription = this.compRef.instance.onMoreDetialsClick.subscribe((data: any) => {
@@ -176,7 +121,7 @@ export class Tab2Page implements OnInit {
               // set inner popup content bound to marker
               const div = document.createElement('div');
               div.appendChild(this.compRef.location.nativeElement);
-              popoverContent.setContent(div);
+              popupContent.setContent(div);
 
               // it's necessary for change detection within MarkerPopoverComponent
               this.appRef.attachView(this.compRef.hostView);
@@ -186,7 +131,7 @@ export class Tab2Page implements OnInit {
               });
             });
         });
-        newMarker.bindPopup(popoverContent, { keepInView: true });
+        newMarker.bindPopup(popupContent, { keepInView: true });
         this.markers.addLayer(newMarker);
       });
     },
@@ -194,30 +139,12 @@ export class Tab2Page implements OnInit {
     );
   }
 
-  getDistance(origin: Array<number>, destination: Array<number>) {
-    // return distance in meters
-    // fuck ya math!
-    const lon1 = this.toRadian(origin[1]),
-        lat1 = this.toRadian(origin[0]),
-        lon2 = this.toRadian(destination[1]),
-        lat2 = this.toRadian(destination[0]);
-
-    const deltaLat = lat2 - lat1;
-    const deltaLon = lon2 - lon1;
-
-    const a = Math.pow(Math.sin(deltaLat / 2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(deltaLon / 2), 2);
-    const c = 2 * Math.asin(Math.sqrt(a));
-    const EARTH_RADIUS = 6371;
-    return c * EARTH_RADIUS * 1000;
+  async addADankSpot(pressedLocation) {
+    // If dropping a pin, use press location.  Otherwise default to current map's center
+    const newSpotLocation = pressedLocation ? pressedLocation : this.map.getCenter();
+    this.presentModal(newSpotLocation);
   }
 
-  toRadian(degree: any) {
-      return degree * Math.PI / 180;
-  }
-
-  toMiles(meters: number) {
-    return (meters * 0.000621371192).toFixed(2);
-  }
 
   async presentModal(newSpotLocation: any) {
     const modal = await this.modalController.create(
