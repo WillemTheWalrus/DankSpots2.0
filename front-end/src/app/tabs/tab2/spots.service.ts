@@ -36,7 +36,15 @@ export class SpotsService {
     return this.http.get('/api/breeds/image/random')
     .pipe(
       map(data => data),
-      catchError(this.handleError('jsonpTest', 'ERROR')),
+      catchError(this.handleError('test', 'ERROR')),
+    );
+  }
+
+  getDogs() {
+    return this.http.get('/api/breeds/image/random/10')
+    .pipe(
+      map(data => data),
+      catchError(this.handleError('test', 'ERROR')),
     );
   }
 

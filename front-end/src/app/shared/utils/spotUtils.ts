@@ -1,6 +1,5 @@
 export class SpotUtilities {
     // return distance in meters
-    // fuck ya math!
     public static getDistance(origin: Array<number>, destination: Array<number>) {
         const lon1 = this.toRadian(origin[0]),
             lat1 = this.toRadian(origin[1]),

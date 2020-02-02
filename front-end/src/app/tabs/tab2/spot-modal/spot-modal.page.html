@@ -1,0 +1,31 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="primary" (click)="close()">
+        <ion-icon slot="icon-only" name="arrow-round-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{clickedSpot.spotName}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+      <ion-grid>
+          <ion-row>
+            <ion-col text-center size="12">
+              <h5>{{distanceTo}} miles away</h5>
+              <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.</p>
+              <ion-slides>
+                <ion-slide *ngFor="let dog of dogs">
+                  <img [src]="dog"/>
+                </ion-slide>
+              </ion-slides>
+            </ion-col> 
+          </ion-row>
+          <ion-row>
+            <ion-col text-center>
+              <ion-button color="new" expand="full"  (click)="close()">More Details</ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+</ion-content>

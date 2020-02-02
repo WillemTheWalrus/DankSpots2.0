@@ -21,8 +21,8 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
   imports: [
     BrowserModule,
     HttpClientModule,
-    IonicModule.forRoot(),
     SharedModule,
+    IonicModule.forRoot(),
     AppRoutingModule,
   ],
   providers: [

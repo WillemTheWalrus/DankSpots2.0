@@ -5,21 +5,18 @@ import { IonicModule } from '@ionic/angular';
 import { SpinnerComponent } from './components/spinner/spinner.component';
 
 const components = [SpinnerComponent];
+const modules = [CommonModule, IonicModule, FormsModule, ReactiveFormsModule];
 
 @NgModule({
   declarations: [
     components
   ],
   imports: [
-    CommonModule,
-    IonicModule,
-    FormsModule,
-    ReactiveFormsModule,
+   modules
   ],
   exports: [
-    FormsModule,
-    ReactiveFormsModule,
-    components
+    components,
+    modules,
   ],
 })
 export class SharedModule { }

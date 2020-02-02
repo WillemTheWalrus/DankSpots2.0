@@ -1,13 +1,13 @@
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
-import { Component, Injector, ComponentFactoryResolver, ApplicationRef, NgZone, ComponentRef, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ModalController, ToastController } from '@ionic/angular';
 import { map, latLng, tileLayer, marker, icon, popup} from 'leaflet';
 import { AddSpotModalModalPage } from './add-spot-modal/add-spot-modal.page';
 import { CognitoUser } from 'amazon-cognito-identity-js';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { SpotsService } from './spots.service';
-import { MarkerPopoverComponent } from './marker-popover/marker-popover.component';
+import { SpotModalPage } from './spot-modal/spot-modal.page';
 import { ActivatedRoute } from '@angular/router';
 import { Spot } from 'src/app/shared/dtos/spot';
 import { iconDefault, greenIcon, redIcon  } from 'src/app/shared/constants/spotConstants';
@@ -23,22 +23,16 @@ export class Tab2Page implements OnInit {
   user: CognitoUser;
   userLocation: any;
   userLocationMarker: any;
-  icon: any;
-  message: string;
   spots: Array<Spot>;
   markers: any;
-  compRef: ComponentRef<MarkerPopoverComponent>;
 
   constructor(private modalController: ModalController,
               private spotsService: SpotsService,
               private geolocation: Geolocation,
               private toastController: ToastController,
-              private injector: Injector,
-              private resolver: ComponentFactoryResolver,
-              private appRef: ApplicationRef,
-              private zone: NgZone,
               private ar: ActivatedRoute
     ) {
+      this.markers = L.markerClusterGroup();
   }
 
   ngOnInit() {
@@ -52,13 +46,8 @@ export class Tab2Page implements OnInit {
     this.getGeoLocation();
   }
 
-  // Remove map when we have multiple map objects
   ionViewWillLeave() {
     this.map.remove();
-  }
-
-  private setMessage(msg: string) {
-    this.message = msg;
   }
 
   leafletMap() {
@@ -86,52 +75,19 @@ export class Tab2Page implements OnInit {
   }
 
   getSpots() {
-    this.markers = L.markerClusterGroup();
     this.spotsService.getSpots().subscribe((spots: Array<Spot>) => {
       this.spots = spots;
       this.spots.forEach(spot => {
-        const popupContent = popup();
         const markerOptions =  { dragable: true, keepInView: true	, icon: greenIcon, spot };
         const newMarker = marker(spot.point.coordinates, markerOptions );
         newMarker.on('click', ev => {
-           // set pop up content for the popover
-           // we need to run it in angular zone
-           this.zone.run(() => {
-              if (this.compRef) {
-                this.compRef.destroy();
-              }
-
-              // creation component, MarkerPopoverComponent should be declared in entryComponents
-              const compFactory = this.resolver.resolveComponentFactory(MarkerPopoverComponent);
-              this.compRef = compFactory.create(this.injector);
-
-
-              // parent-child communication
+              // prop data
               const clickedSpot = ev.target.options.spot;
               const originCoords = clickedSpot.point.coordinates;
               const destinationCoords = [this.userLocation.lat, this.userLocation.lng];
-              this.compRef.instance.clickedSpot = clickedSpot;
-              this.compRef.instance.distanceTo = SpotUtilities.toMiles(SpotUtilities.getDistance(originCoords, destinationCoords));
-
-              // subscription for button click events using event emitter
-              const subscription = this.compRef.instance.onMoreDetialsClick.subscribe((data: any) => {
-                  console.log(data);
-              });
-
-              // set inner popup content bound to marker
-              const div = document.createElement('div');
-              div.appendChild(this.compRef.location.nativeElement);
-              popupContent.setContent(div);
-
-              // it's necessary for change detection within MarkerPopoverComponent
-              this.appRef.attachView(this.compRef.hostView);
-              this.compRef.onDestroy(() => {
-                this.appRef.detachView(this.compRef.hostView);
-                subscription.unsubscribe();
-              });
-            });
+              const distanceTo = SpotUtilities.toMiles(SpotUtilities.getDistance(originCoords, destinationCoords));
+              this.presentSpotModal(clickedSpot, distanceTo);
         });
-        newMarker.bindPopup(popupContent, { keepInView: true });
         this.markers.addLayer(newMarker);
       });
     },
@@ -140,13 +96,25 @@ export class Tab2Page implements OnInit {
   }
 
   async addADankSpot(pressedLocation) {
-    // If dropping a pin, use press location.  Otherwise default to current map's center
-    const newSpotLocation = pressedLocation ? pressedLocation : this.map.getCenter();
-    this.presentModal(newSpotLocation);
+    this.presentAddDankSpotModal(pressedLocation ? pressedLocation : this.map.getCenter());
+  }
+
+  async presentSpotModal(clickedSpot, distanceTo) {
+    const modal = await this.modalController.create(
+      {
+        component: SpotModalPage,
+        componentProps: {
+          clickedSpot,
+          distanceTo,
+        }
+      }
+    );
+    modal.onDidDismiss().then((data: any) => {});
+    return await modal.present();
   }
 
 
-  async presentModal(newSpotLocation: any) {
+  async presentAddDankSpotModal(newSpotLocation: any) {
     const modal = await this.modalController.create(
       {
         component: AddSpotModalModalPage,
@@ -157,13 +125,12 @@ export class Tab2Page implements OnInit {
     );
     modal.onDidDismiss().then((dataReturned: any) => {
       if (dataReturned.data) {
-        this.setMessage('New Spot Added');
-        // Create marker and add to the map
-        // toDo:  generate the new icon like I do the spots coming from the server
         const addedMarker = marker(dataReturned.data.newSpotLocation, { icon: redIcon });
-        addedMarker.bindPopup(dataReturned.data.name);
-        addedMarker.on('click', ev => {
-          console.log('titties');
+        addedMarker.on('click', (ev: any) => {
+          const originCoords = [ev.latlng.lat, ev.latlng.lng];
+          const destinationCoords = [this.userLocation.lat, this.userLocation.lng];
+          const distanceTo = SpotUtilities.toMiles(SpotUtilities.getDistance(originCoords, destinationCoords));
+          this.presentSpotModal({}, distanceTo);
         });
         this.markers.addLayer(addedMarker);
         this.presentToast();
@@ -174,7 +141,7 @@ export class Tab2Page implements OnInit {
 
   async presentToast() {
     const toast = await this.toastController.create({
-      message: this.message,
+      message: 'Spot Added',
       color: 'success',
       showCloseButton: true,
       duration: 5000
