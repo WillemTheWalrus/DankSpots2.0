@@ -2,7 +2,7 @@ import * as L from 'leaflet';
 import 'leaflet.markercluster';
 import { Component, OnInit } from '@angular/core';
 import { ModalController, ToastController } from '@ionic/angular';
-import { map, latLng, tileLayer, marker, icon, popup} from 'leaflet';
+import { map, latLng, tileLayer, marker } from 'leaflet';
 import { AddSpotModalModalPage } from './add-spot-modal/add-spot-modal.page';
 import { CognitoUser } from 'amazon-cognito-identity-js';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
@@ -83,8 +83,8 @@ export class Tab2Page implements OnInit {
         newMarker.on('click', ev => {
               // prop data
               const clickedSpot = ev.target.options.spot;
-              const originCoords = clickedSpot.point.coordinates;
-              const destinationCoords = [this.userLocation.lat, this.userLocation.lng];
+              const originCoords = [this.userLocation.lat, this.userLocation.lng];
+              const destinationCoords = clickedSpot.point.coordinates;
               const distanceTo = SpotUtilities.toMiles(SpotUtilities.getDistance(originCoords, destinationCoords));
               this.presentSpotModal(clickedSpot, distanceTo);
         });
@@ -106,6 +106,7 @@ export class Tab2Page implements OnInit {
         componentProps: {
           clickedSpot,
           distanceTo,
+          userLocation: this.userLocation,
         }
       }
     );

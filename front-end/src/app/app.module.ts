@@ -14,6 +14,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { SharedModule } from './shared/shared.module';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { LaunchNavigator } from '@ionic-native/launch-navigator/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -43,6 +44,7 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
     Geolocation,
     Camera,
     WebView,
+    LaunchNavigator,
   ],
   bootstrap: [AppComponent],
 })

@@ -13,7 +13,12 @@
       <ion-grid>
           <ion-row>
             <ion-col text-center size="12">
-              <h5>{{distanceTo}} miles away</h5>
+              <h5>{{distanceTo}} miles away 
+                <ion-chip (click)="launchNagivator()">
+                  <ion-icon color="primary" name="navigate"></ion-icon>
+                  <ion-label>Directions</ion-label>
+               </ion-chip>
+              </h5>
               <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.</p>
               <ion-slides>
                 <ion-slide *ngFor="let dog of dogs">
