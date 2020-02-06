@@ -13,6 +13,7 @@ import { Spot } from 'src/app/shared/dtos/spot';
 import { iconDefault, greenIcon, redIcon  } from 'src/app/shared/constants/spotConstants';
 import { SpotUtilities } from '../../shared/utils/spotUtils';
 
+
 @Component({
   selector: 'app-tab2',
   templateUrl: 'tab2.page.html',
@@ -24,7 +25,13 @@ export class Tab2Page implements OnInit {
   userLocation: any;
   userLocationMarker: any;
   spots: Array<Spot>;
-  markers: any;
+  spotMarkers: L.MarkerClusterGroup;
+  plugMarkers: L.MarkerClusterGroup;
+  munchyMarkers: L.MarkerClusterGroup;
+  hideSpots: boolean;
+  hidePlugs: boolean;
+  hideMunchies: boolean;
+  hideFilters: boolean;
 
   constructor(private modalController: ModalController,
               private spotsService: SpotsService,
@@ -32,7 +39,13 @@ export class Tab2Page implements OnInit {
               private toastController: ToastController,
               private ar: ActivatedRoute
     ) {
-      this.markers = L.markerClusterGroup();
+      this.spotMarkers = L.markerClusterGroup();
+      this.plugMarkers = L.markerClusterGroup();
+      this.munchyMarkers = L.markerClusterGroup();
+      this.hideFilters = true;
+      this.hideSpots = false;
+      this.hideMunchies = false;
+      this.hidePlugs = false;
   }
 
   ngOnInit() {
@@ -40,6 +53,7 @@ export class Tab2Page implements OnInit {
       this.getSpots();
     });
   }
+
 
   ionViewDidEnter() {
     this.leafletMap();
@@ -53,14 +67,62 @@ export class Tab2Page implements OnInit {
   leafletMap() {
     // Initialize Leaflet map
     this.map = map('mapId').setView(latLng(32.7157, -117.1611), 10); // default to San Diego
-    tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    }).addTo(this.map);
-    this.map.addLayer(this.markers);
+    tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(this.map);
+    this.map.addLayer(this.spotMarkers);
+    this.map.addLayer(this.plugMarkers);
+    this.map.addLayer(this.munchyMarkers);
 
     // Bind map press event for dropping a pin
     this.map.on('click', ev => {
       this.addADankSpot(ev.latlng);
     });
+  }
+
+  toggleFilters() {
+    this.hideFilters = !this.hideFilters;
+  }
+
+  toggleSpots(){
+    this.hideSpots = !this.hideSpots;
+    if(this.hideSpots){
+      this.map.removeLayer(this.spotMarkers);
+    }
+    else{
+      this.map.addLayer(this.spotMarkers);
+    }
+  }
+
+  togglePlugs(){
+    this.hidePlugs = !this.hidePlugs;
+    if(this.hidePlugs){
+      this.map.removeLayer(this.plugMarkers);
+    }
+    else{
+      this.map.addLayer(this.plugMarkers);
+    }
+  }
+
+  toggleMunchies()
+  {
+    this.hideMunchies = !this.hideMunchies;
+    if(this.hideMunchies){
+      this.map.removeLayer(this.hideMunchies);
+    }
+    else{
+      this.map.addLayer(this.hideMunchies);
+    }
+  }
+
+  enableAllMarkerLayers(){
+    if(this.hidePlugs){
+      this.togglePlugs();
+    }
+    if(this.hideMunchies){
+      this.toggleMunchies();
+    }
+    if(this.hideSpots){
+      this.toggleSpots();
+    }
   }
 
   getGeoLocation() {
@@ -78,7 +140,7 @@ export class Tab2Page implements OnInit {
     this.spotsService.getSpots().subscribe((spots: Array<Spot>) => {
       this.spots = spots;
       this.spots.forEach(spot => {
-        const markerOptions =  { dragable: true, keepInView: true	, icon: greenIcon, spot };
+        const markerOptions =  { icon: greenIcon, spot };
         const newMarker = marker(spot.point.coordinates, markerOptions );
         newMarker.on('click', ev => {
               // prop data
@@ -88,7 +150,14 @@ export class Tab2Page implements OnInit {
               const distanceTo = SpotUtilities.toMiles(SpotUtilities.getDistance(originCoords, destinationCoords));
               this.presentSpotModal(clickedSpot, distanceTo);
         });
-        this.markers.addLayer(newMarker);
+        console.log(spot);
+        if (spot.spotType === 'spot') {
+          this.spotMarkers.addLayer(newMarker);
+        } else if (spot.spotType === 'munchy') {
+          this.munchyMarkers.addLayer(newMarker);
+        } else if (spot.spotType === 'plug') {
+          this.plugMarkers.addLayer(newMarker);
+        }
       });
     },
       (error) => {console.log(error); }
@@ -133,7 +202,7 @@ export class Tab2Page implements OnInit {
           const distanceTo = SpotUtilities.toMiles(SpotUtilities.getDistance(originCoords, destinationCoords));
           this.presentSpotModal({}, distanceTo);
         });
-        this.markers.addLayer(addedMarker);
+        this.spotMarkers.addLayer(addedMarker);
         this.presentToast();
       }
     });
@@ -149,5 +218,7 @@ export class Tab2Page implements OnInit {
     });
     toast.present();
   }
+
+
 
 }
