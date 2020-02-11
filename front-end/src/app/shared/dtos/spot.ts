@@ -7,6 +7,7 @@ export class Spot {
     rating: number;
     spotName: string;
     point: any;
+    spotType: string;
     constructor(data: object) {
         Object.assign(this, data);
     }
