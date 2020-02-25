@@ -8,31 +8,23 @@
         <ion-icon name="funnel"></ion-icon>
       </ion-button>
     </ion-buttons>
-    
   </ion-toolbar>
-
   <ion-toolbar [hidden]="hideFilters">
     <ion-segment>
-
       <ion-segment-button (click)=toggleSpots() value="spots">
         <ion-icon name="sunny"></ion-icon>
       </ion-segment-button>
-
       <ion-segment-button (click)=togglePlugs() value="plug">
         <ion-icon name="flame"></ion-icon>
       </ion-segment-button>
-
       <ion-segment-button (click)=toggleMunchies() value="munchies">
         <ion-icon name="pizza"></ion-icon>
       </ion-segment-button>
-
       <ion-segment-button (click)=enableAllMarkerLayers() value="close">
         <ion-icon name="close"></ion-icon>
       </ion-segment-button>
-
     </ion-segment>
   </ion-toolbar>
-
 </ion-header>
 <ion-content>
   <div id="mapId" style="width: 100%; height: 100%">

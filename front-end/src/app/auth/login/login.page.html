@@ -1,6 +1,6 @@
-<ion-content padding>
+<ion-content class="ion-padding">
     <ion-grid class="h-100">
-        <ion-row justify-content-center align-items-center style="height: 100%; flex-direction: column">
+        <ion-row class="ion-justify-content-center ion- align-items-center">
             <ion-col size="auto">
                 <ion-icon class="iconSize" name="leaf"></ion-icon>
                 <ion-text text-center>
@@ -10,19 +10,19 @@
         </ion-row>
     </ion-grid>
 </ion-content>
-<ion-footer padding>
-    <ion-list margin-bottom>
-        <ion-item text-center button color="new" (click)="loginEmail()">
+<ion-footer class="ion-padding">
+    <ion-list class="ion-margin-bottom">
+        <ion-item class="ion-text-center" button color="new" (click)="loginEmail()">
             <ion-label>Log In With Email</ion-label>
         </ion-item>
-      </ion-list>
-      <ion-grid margin-bottom>
-          <ion-row>
-              <ion-col>
+    </ion-list>
+    <ion-grid margin-bottom>
+        <ion-row>
+            <ion-col>
                 <div class="ion-text-center">
                     <ion-router-link class="clickable underline" color="primary" (click)="signUp()">NEW TO DANK SPOTS? SIGN UP</ion-router-link>
                 </div>
-              </ion-col>
-          </ion-row>
-      </ion-grid>
-  </ion-footer>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-footer>
