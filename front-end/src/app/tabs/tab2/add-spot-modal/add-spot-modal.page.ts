@@ -3,7 +3,6 @@ import { ModalController, ActionSheetController } from '@ionic/angular';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 import { Camera, CameraOptions } from '@ionic-native/Camera/ngx';
-import { WebView } from '@ionic-native/ionic-webview/ngx';
 
 @Component({
   selector: 'app-add-spot-modal',
@@ -17,7 +16,7 @@ export class AddSpotModalModalPage implements OnInit {
 
   constructor( private modalController: ModalController, private fb: FormBuilder,
                private actionSheetController: ActionSheetController,
-               private camera: Camera,  public webView: WebView) { }
+               private camera: Camera) { }
 
   ionViewDidEnter() {}
 
@@ -47,8 +46,7 @@ export class AddSpotModalModalPage implements OnInit {
       // imageData is either a base64 encoded string or a file URI
       // If it's base64 (DATA_URL):
       // const base64Image = 'data:image/jpeg;base64,' + imageData;
-      this.image = this.webView.convertFileSrc(imageData);
-      console.log(imageData);
+      this.image = imageData;
     }, (err) => {
       // Handle error
     });

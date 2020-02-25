@@ -103,9 +103,9 @@ export class Tab2Page implements OnInit {
   toggleMunchies() {
     this.hideMunchies = !this.hideMunchies;
     if (this.hideMunchies) {
-      this.map.removeLayer(this.plugMarkers);
+      this.map.removeLayer(this.munchyMarkers);
     } else {
-      this.map.addLayer(this.plugMarkers);
+      this.map.addLayer(this.munchyMarkers);
     }
   }
 
