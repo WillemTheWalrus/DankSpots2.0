@@ -24,8 +24,8 @@ export class SpotsService {
       return data.Items.map(item => {
         return new Spot({ ...item, point: JSON.parse(item.geoJson) });
       });
-    })
-    , catchError(error => observableThrowError(error)));
+    }),
+    catchError(error => observableThrowError(error)));
   }
 
   saveSpot() {}

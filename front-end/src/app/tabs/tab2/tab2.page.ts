@@ -20,10 +20,10 @@ import { SpotUtilities } from '../../shared/utils/spotUtils';
   styleUrls: ['tab2.page.scss']
 })
 export class Tab2Page implements OnInit {
-  map: any;
+  map: L.Map;
   user: CognitoUser;
-  userLocation: any;
-  userLocationMarker: any;
+  userLocation: L.LatLng;
+  userLocationMarker: L.Marker;
   spots: Array<Spot>;
   spotMarkers: L.MarkerClusterGroup;
   plugMarkers: L.MarkerClusterGroup;
@@ -73,7 +73,7 @@ export class Tab2Page implements OnInit {
     this.map.addLayer(this.munchyMarkers);
 
     // Bind map press event for dropping a pin
-    this.map.on('click', ev => {
+    this.map.on('click', (ev: any) => {
       this.addADankSpot(ev.latlng);
     });
   }
@@ -82,45 +82,41 @@ export class Tab2Page implements OnInit {
     this.hideFilters = !this.hideFilters;
   }
 
-  toggleSpots(){
+  toggleSpots() {
     this.hideSpots = !this.hideSpots;
-    if(this.hideSpots){
+    if (this.hideSpots) {
       this.map.removeLayer(this.spotMarkers);
-    }
-    else{
+    } else {
       this.map.addLayer(this.spotMarkers);
     }
   }
 
-  togglePlugs(){
+  togglePlugs() {
     this.hidePlugs = !this.hidePlugs;
-    if(this.hidePlugs){
+    if (this.hidePlugs) {
       this.map.removeLayer(this.plugMarkers);
-    }
-    else{
+    } else {
       this.map.addLayer(this.plugMarkers);
     }
   }
 
-  toggleMunchies()
-  {
+  toggleMunchies() {
     this.hideMunchies = !this.hideMunchies;
-    if(this.hideMunchies){
-      this.map.removeLayer(this.hideMunchies);
-    }
-    else{
-      this.map.addLayer(this.hideMunchies);
+    if (this.hideMunchies) {
+      this.map.removeLayer(this.plugMarkers);
+    } else {
+      this.map.addLayer(this.plugMarkers);
     }
   }
 
-  enableAllMarkerLayers(){
-    if(this.hidePlugs){
+  enableAllMarkerLayers() {
+    if (this.hidePlugs) {
       this.togglePlugs();
     }
-    if(this.hideMunchies){
+    if (this.hideMunchies) {
       this.toggleMunchies();
     }
-    if(this.hideSpots){
+    if (this.hideSpots) {
       this.toggleSpots();
     }
   }
