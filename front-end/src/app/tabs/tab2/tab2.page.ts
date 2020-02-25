@@ -82,45 +82,41 @@ export class Tab2Page implements OnInit {
     this.hideFilters = !this.hideFilters;
   }
 
-  toggleSpots(){
+  toggleSpots() {
     this.hideSpots = !this.hideSpots;
-    if(this.hideSpots){
+    if (this.hideSpots) {
       this.map.removeLayer(this.spotMarkers);
-    }
-    else{
+    } else {
       this.map.addLayer(this.spotMarkers);
     }
   }
 
-  togglePlugs(){
+  togglePlugs() {
     this.hidePlugs = !this.hidePlugs;
-    if(this.hidePlugs){
+    if (this.hidePlugs) {
       this.map.removeLayer(this.plugMarkers);
-    }
-    else{
+    } else {
       this.map.addLayer(this.plugMarkers);
     }
   }
 
-  toggleMunchies()
-  {
+  toggleMunchies() {
     this.hideMunchies = !this.hideMunchies;
-    if(this.hideMunchies){
+    if (this.hideMunchies) {
       this.map.removeLayer(this.hideMunchies);
-    }
-    else{
+    } else {
       this.map.addLayer(this.hideMunchies);
     }
   }
 
-  enableAllMarkerLayers(){
-    if(this.hidePlugs){
+  enableAllMarkerLayers() {
+    if (this.hidePlugs) {
       this.togglePlugs();
     }
-    if(this.hideMunchies){
+    if (this.hideMunchies) {
       this.toggleMunchies();
     }
-    if(this.hideSpots){
+    if (this.hideSpots) {
       this.toggleSpots();
     }
   }
@@ -150,7 +146,6 @@ export class Tab2Page implements OnInit {
               const distanceTo = SpotUtilities.toMiles(SpotUtilities.getDistance(originCoords, destinationCoords));
               this.presentSpotModal(clickedSpot, distanceTo);
         });
-        console.log(spot);
         if (spot.spotType === 'spot') {
           this.spotMarkers.addLayer(newMarker);
         } else if (spot.spotType === 'munchy') {
