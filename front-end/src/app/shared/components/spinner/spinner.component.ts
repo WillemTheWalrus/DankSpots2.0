@@ -12,7 +12,7 @@ export class SpinnerComponent implements OnInit {
 
   ngOnInit() {
     this.spinCount = 0;
-		this.spinnerService.spinning.subscribe(value => {
+		  this.spinnerService.spinning.subscribe(value => {
 			this.spinCount += value;
 			if (this.spinCount < 0) {
 				this.spinCount = 0;

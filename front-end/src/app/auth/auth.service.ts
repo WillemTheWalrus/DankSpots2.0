@@ -17,7 +17,7 @@ declare const AWS: any;
 })
 export class AuthService {
   private unauthCreds: any;
-  private config: any = new AwsConfig().load();
+  config: any = new AwsConfig().load();
   private poolData: ICognitoUserPoolData;
   private userPool: CognitoUserPool;
   private _cognitoUser: CognitoUser;

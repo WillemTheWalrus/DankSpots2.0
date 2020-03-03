@@ -21,16 +21,16 @@ export class SpotsService {
     };
     return this.http.get('/Prod/spot', httpOptions )
     .pipe(map((data: any) => {
-      return data.Items.map(item => {
+      return data.Items.map((item: any) => {
         return new Spot({ ...item, point: JSON.parse(item.geoJson) });
       });
     }),
     catchError(error => observableThrowError(error)));
   }
 
-  saveSpot() {}
+  getSpot() {}
 
-  loadSpot() {}
+  saveSpot() {}
 
   getDog() {
     return this.http.get('/api/breeds/image/random')

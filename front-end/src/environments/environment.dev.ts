@@ -7,5 +7,6 @@ export const environment = {
     production: true,
     envName: 'dev',
     assetUrl: '/',
-    baseApi: 'https://39lg8471i6.execute-api.us-west-2.amazonaws.com/Prod'
+    baseApi: 'https://39lg8471i6.execute-api.us-west-2.amazonaws.com/Prod',
+    imageBucket: 'https://dankimagebucket.s3-us-west-2.amazonaws.com/spot/image'
   };

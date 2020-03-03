@@ -146,7 +146,6 @@ export class Tab2Page implements OnInit {
               const distanceTo = SpotUtilities.toMiles(SpotUtilities.getDistance(originCoords, destinationCoords));
               this.presentSpotModal(clickedSpot, distanceTo);
         });
-        console.log(spot);
         if (spot.spotType === 'spot') {
           this.spotMarkers.addLayer(newMarker);
         } else if (spot.spotType === 'munchy') {

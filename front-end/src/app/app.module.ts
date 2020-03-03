@@ -9,12 +9,12 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Camera } from '@ionic-native/Camera/ngx';
-import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { SharedModule } from './shared/shared.module';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { LaunchNavigator } from '@ionic-native/launch-navigator/ngx';
+import { Base64 } from '@ionic-native/base64/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -43,7 +43,7 @@ import { LaunchNavigator } from '@ionic-native/launch-navigator/ngx';
     },
     Geolocation,
     Camera,
-    WebView,
+    Base64,
     LaunchNavigator,
   ],
   bootstrap: [AppComponent],

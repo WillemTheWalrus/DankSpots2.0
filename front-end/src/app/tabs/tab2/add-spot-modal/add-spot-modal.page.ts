@@ -1,8 +1,10 @@
+import { ImageService } from '../image.service';
 import { Component, OnInit, Input } from '@angular/core';
 import { ModalController, ActionSheetController } from '@ionic/angular';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 import { Camera, CameraOptions } from '@ionic-native/Camera/ngx';
+import { Base64 } from '@ionic-native/base64/ngx';
 
 @Component({
   selector: 'app-add-spot-modal',
@@ -12,11 +14,21 @@ import { Camera, CameraOptions } from '@ionic-native/Camera/ngx';
 export class AddSpotModalModalPage implements OnInit {
   @Input() newSpotLocation: any;
   form: FormGroup;
-  image: any;
+  image: string;
+  uploadUrl: string;
 
-  constructor( private modalController: ModalController, private fb: FormBuilder,
+  constructor( private modalController: ModalController,
+               private fb: FormBuilder,
                private actionSheetController: ActionSheetController,
-               private camera: Camera) { }
+               private camera: Camera,
+               private base64: Base64,
+               private imageService: ImageService
+              ) {
+                this.form = this.fb.group({
+                  name: ['', Validators.required],
+                  description: ['', Validators.required]
+               });
+            }
 
   ionViewDidEnter() {}
 
@@ -24,14 +36,10 @@ export class AddSpotModalModalPage implements OnInit {
   }
 
   ngOnInit() {
-    this.form = this.fb.group({
-      name:  ['', Validators.required]
-   });
+    this.imageService.getImages().subscribe(((data: any) => {
+      this.uploadUrl = data.uploadUrl;
+    }));
     this.form.valueChanges.pipe(debounceTime(200)).subscribe();
-  }
-
-  get isFormValid() {
-    return this.form.invalid;
   }
 
   pickImage(sourceType: any) {
@@ -45,13 +53,17 @@ export class AddSpotModalModalPage implements OnInit {
     this.camera.getPicture(options).then((imageData) => {
       // imageData is either a base64 encoded string or a file URI
       // If it's base64 (DATA_URL):
-      // const base64Image = 'data:image/jpeg;base64,' + imageData;
+      const base64Image = 'data:image/jpeg;base64,' + imageData;
       this.image = imageData;
+      // this.imageService.uploadImage(imageData);
+      this.base64.encodeFile(imageData).then((base64File: string) => {
+        console.log(base64File);
+      });
     }, (err) => {
       // Handle error
     });
   }
-  async closeModal() {
+  async addDSpot() {
     await this.modalController.dismiss({ ...this.form.value, newSpotLocation: this.newSpotLocation});
   }
 
