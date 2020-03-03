@@ -55,10 +55,7 @@ export class AddSpotModalModalPage implements OnInit {
       // If it's base64 (DATA_URL):
       const base64Image = 'data:image/jpeg;base64,' + imageData;
       this.image = imageData;
-      // this.imageService.uploadImage(imageData);
-      this.base64.encodeFile(imageData).then((base64File: string) => {
-        console.log(base64File);
-      });
+      this.imageService.uploadImage(imageData);
     }, (err) => {
       // Handle error
     });
