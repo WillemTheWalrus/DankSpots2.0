@@ -4,10 +4,7 @@ import { ModalController, ActionSheetController } from '@ionic/angular';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 import { Camera, CameraOptions } from '@ionic-native/Camera/ngx';
-<<<<<<< HEAD
 import { File } from '@ionic-native/file/ngx';
-=======
->>>>>>> master
 
 @Component({
   selector: 'app-add-spot-modal',
@@ -23,7 +20,6 @@ export class AddSpotModalModalPage implements OnInit {
   constructor( private modalController: ModalController,
                private fb: FormBuilder,
                private actionSheetController: ActionSheetController,
-<<<<<<< HEAD
                private camera: Camera,
                private file: File,
                private imageService: ImageService
@@ -33,9 +29,6 @@ export class AddSpotModalModalPage implements OnInit {
                   description: ['', Validators.required]
                });
             }
-=======
-               private camera: Camera) { }
->>>>>>> master
 
   ionViewDidEnter() {}
 
@@ -60,18 +53,12 @@ export class AddSpotModalModalPage implements OnInit {
     this.camera.getPicture(options).then((imageData) => {
       // imageData is either a base64 encoded string or a file URI
       // If it's base64 (DATA_URL):
-<<<<<<< HEAD
       // const base64Image = 'data:image/jpeg;base64,' + imageData;
       this.image = imageData;
       // this.imageService.uploadImage(imageData);
       this.file.resolveLocalFilesystemUrl(imageData).then(result => {
           this.resolveFileEntry(result);
       }).catch(err => {console.error('Error resolving the file system url'); });
-=======
-      const base64Image = 'data:image/jpeg;base64,' + imageData;
-      this.image = base64Image;
-      console.log(imageData);
->>>>>>> master
     }, (err) => {
       // Handle error
     });
