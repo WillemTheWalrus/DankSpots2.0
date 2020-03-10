@@ -11,7 +11,6 @@ declare const AWS: any;
 
 export class ImageService {
   user: any;
-  base64textString: string;
   constructor(private http: HttpClient, private authService: AuthService) {
   }
 
@@ -31,10 +30,7 @@ export class ImageService {
       );
   }
 
-  uploadImage(file: any) {
-    const reader = new FileReader();
-    reader.onload = this.handleReaderLoaded.bind(this);
-    reader.readAsBinaryString(file);
+  uploadImage(file: string) {
     const config = this.authService.config;
     const bucket = new AWS.S3(
       {
@@ -45,10 +41,11 @@ export class ImageService {
     );
     const params = {
         Bucket: `dankimagebucket`,
-        Key: `test4`,
-        Body: this.base64textString,
+        Key: `test5`,
+        Body: file,
         ACL: 'public-read',
     };
+    console.log(params);
     bucket.upload(params, (data: any) => {
       console.log('success', data);
     }, (err: any) => {
@@ -65,11 +62,5 @@ export class ImageService {
         // Let the app keep running by returning an empty result.
         return of(result as T);
       };
-  }
-
-  handleReaderLoaded(ev) {
-    const binaryString = ev.target.result;
-    console.log(btoa(binaryString));
-    this.base64textString = btoa(binaryString);
   }
 }

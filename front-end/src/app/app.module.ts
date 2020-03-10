@@ -14,7 +14,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { SharedModule } from './shared/shared.module';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { LaunchNavigator } from '@ionic-native/launch-navigator/ngx';
-import { Base64 } from '@ionic-native/base64/ngx';
+import { File } from '@ionic-native/file/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -43,7 +43,7 @@ import { Base64 } from '@ionic-native/base64/ngx';
     },
     Geolocation,
     Camera,
-    Base64,
+    File,
     LaunchNavigator,
   ],
   bootstrap: [AppComponent],

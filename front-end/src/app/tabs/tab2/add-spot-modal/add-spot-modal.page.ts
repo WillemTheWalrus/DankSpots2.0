@@ -4,7 +4,7 @@ import { ModalController, ActionSheetController } from '@ionic/angular';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 import { Camera, CameraOptions } from '@ionic-native/Camera/ngx';
-import { Base64 } from '@ionic-native/base64/ngx';
+import { File } from '@ionic-native/file/ngx';
 
 @Component({
   selector: 'app-add-spot-modal',
@@ -21,7 +21,7 @@ export class AddSpotModalModalPage implements OnInit {
                private fb: FormBuilder,
                private actionSheetController: ActionSheetController,
                private camera: Camera,
-               private base64: Base64,
+               private file: File,
                private imageService: ImageService
               ) {
                 this.form = this.fb.group({
@@ -53,13 +53,35 @@ export class AddSpotModalModalPage implements OnInit {
     this.camera.getPicture(options).then((imageData) => {
       // imageData is either a base64 encoded string or a file URI
       // If it's base64 (DATA_URL):
-      const base64Image = 'data:image/jpeg;base64,' + imageData;
+      // const base64Image = 'data:image/jpeg;base64,' + imageData;
       this.image = imageData;
-      this.imageService.uploadImage(imageData);
+      // this.imageService.uploadImage(imageData);
+      this.file.resolveLocalFilesystemUrl(imageData).then(result => {
+          this.resolveFileEntry(result);
+      }).catch(err => {console.error('Error resolving the file system url'); });
     }, (err) => {
       // Handle error
     });
   }
+
+  resolveFileEntry(res) {
+    res.file((resFile) => {
+     const reader = this.getFileReader();
+     console.log(reader);
+     reader.readAsDataURL(resFile);
+     reader.onload = (e: any) => {
+        // The file's text will be printed here
+      console.log(e.target.result);
+     };
+    });
+  }
+
+  getFileReader(): FileReader {
+    const fileReader = new FileReader();
+    const zoneOriginalInstance = (fileReader as any).__zone_symbol__originalInstance;
+    return zoneOriginalInstance || fileReader;
+}
+
   async addDSpot() {
     await this.modalController.dismiss({ ...this.form.value, newSpotLocation: this.newSpotLocation});
   }
