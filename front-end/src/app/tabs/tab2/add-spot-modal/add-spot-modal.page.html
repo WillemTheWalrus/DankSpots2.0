@@ -9,21 +9,21 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
+<ion-content class="ion-padding">
     <form [formGroup]="form">
         <ion-grid>
             <ion-row>
-              <ion-col text-center>
+              <ion-col class="ion-text-center">
                 <ion-input type="text" placeholder="Spot Name" formControlName="name"></ion-input>
               </ion-col>
             </ion-row>
             <ion-row>
-                <ion-col text-center>
+                <ion-col class="ion-text-center">
                   <ion-textarea rows="4" placeholder="Enter any description here..."></ion-textarea>
                 </ion-col>
               </ion-row>
             <ion-row>
-              <ion-col text-center>
+              <ion-col class="ion-text-center">
                 <ion-card (click)="presentActionSheet()" *ngIf="!image">
                   <ion-card-header>
                     <ion-card-title>Upload Image(s)</ion-card-title>
@@ -40,7 +40,7 @@
               </ion-col>
             </ion-row>
             <ion-row>
-              <ion-col text-center>
+              <ion-col class="ion-text-center">
                 <ion-button color="new" expand="full"  (click)="closeModal()">Add Spot</ion-button>
               </ion-col>
             </ion-row>
