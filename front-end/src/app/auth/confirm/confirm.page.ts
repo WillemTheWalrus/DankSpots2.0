@@ -59,7 +59,15 @@ export class ConfirmPage implements OnInit {
     const toast = await this.toastController.create({
       message: this.message,
       duration: 2000,
-      showCloseButton: true,
+      buttons: [
+        {
+          text: 'Close',
+          role: 'cancel',
+          handler: () => {
+            console.log('Close clicked');
+          }
+        }
+      ]
     });
     toast.present();
   }

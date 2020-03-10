@@ -208,7 +208,15 @@ export class Tab2Page implements OnInit {
     const toast = await this.toastController.create({
       message: 'Spot Added',
       color: 'success',
-      showCloseButton: true,
+      buttons: [
+        {
+          text: 'Close',
+          role: 'cancel',
+          handler: () => {
+            console.log('Close clicked');
+          }
+        }
+      ],
       duration: 5000
     });
     toast.present();

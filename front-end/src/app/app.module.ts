@@ -43,7 +43,10 @@ import { File } from '@ionic-native/file/ngx';
     },
     Geolocation,
     Camera,
+<<<<<<< HEAD
     File,
+=======
+>>>>>>> master
     LaunchNavigator,
   ],
   bootstrap: [AppComponent],

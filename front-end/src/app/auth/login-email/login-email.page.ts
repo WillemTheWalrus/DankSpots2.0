@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../../auth.service';
-import { AuthFormValidatorsService } from '../../auth-form-validators.service';
+import { AuthService } from '../auth.service';
+import { AuthFormValidatorsService } from '../auth-form-validators.service';
 import { FormGroup } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
 
@@ -50,7 +50,15 @@ export class LoginEmailPage implements OnInit {
     const toast = await this.toastController.create({
       message: this.error,
       color: 'danger',
-      showCloseButton: true,
+      buttons: [
+        {
+          text: 'Close',
+          role: 'cancel',
+          handler: () => {
+            console.log('Close clicked');
+          }
+        }
+      ],
       duration: 2000
     });
     toast.present();

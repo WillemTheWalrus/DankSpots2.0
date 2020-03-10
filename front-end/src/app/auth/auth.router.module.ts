@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginPage } from './login/login.page';
 import { SignUpPage } from './sign-up/sign-up.page';
-import { LoginEmailPage } from './login/login-email/login-email.page';
+import { LoginEmailPage } from './login-email/login-email.page';
 import { ConfirmPage } from './confirm/confirm.page';
 import { ForgotPasswordPage } from './forgot-password/forgot-password.page';
 
