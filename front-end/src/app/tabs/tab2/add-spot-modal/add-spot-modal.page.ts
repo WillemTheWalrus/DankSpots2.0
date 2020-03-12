@@ -65,11 +65,10 @@ export class AddSpotModalModalPage implements OnInit {
 
   readFile(file: any) {
       const fileReader = new FileReader();
-      const realFileReader = (fileReader as any)._realReader;
-      fileReader.onload = (evt) => {
+      fileReader.onload = (evt: any) => {
         // the base64 of the video is: evt.target.result
         console.log('----- on load -----');
-        console.log(evt.target.result);
+        console.log(evt);
         const blob = evt.target.result;
         this.imageService.uploadImage(blob);
       };

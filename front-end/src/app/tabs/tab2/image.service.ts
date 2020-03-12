@@ -34,14 +34,14 @@ export class ImageService {
     const config = this.authService.config;
     const bucket = new AWS.S3(
       {
-          accessKeyId: 'AKIA6G3TPIZGK53GTFJJ',
-          secretAccessKey: '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',
+          accessKeyId: 'AKIA6G3TPIZGFLSWMHEZ',
+          secretAccessKey: 'tsN8/OcHpoH60Bjq55TAuBw+KkDqkMILgDO5n2aKgNXi7',
           region: config.region,
       }
     );
     const params = {
         Bucket: `dankimagebucket`,
-        Key: `test5`,
+        Key: `test6.jpg`,
         Body: file,
         ACL: 'public-read',
     };
