@@ -30,7 +30,7 @@ export class ImageService {
       );
   }
 
-  uploadImage(file: string) {
+  uploadImage(file: any) {
     const config = this.authService.config;
     const bucket = new AWS.S3(
       {

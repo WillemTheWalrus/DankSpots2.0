@@ -51,36 +51,30 @@ export class AddSpotModalModalPage implements OnInit {
       mediaType: this.camera.MediaType.PICTURE
     };
     this.camera.getPicture(options).then((imageData) => {
-      // imageData is either a base64 encoded string or a file URI
-      // If it's base64 (DATA_URL):
-      // const base64Image = 'data:image/jpeg;base64,' + imageData;
-      this.image = imageData;
-      // this.imageService.uploadImage(imageData);
-      this.file.resolveLocalFilesystemUrl(imageData).then(result => {
-          this.resolveFileEntry(result);
-      }).catch(err => {console.error('Error resolving the file system url'); });
-    }, (err) => {
+      this.file.resolveLocalFilesystemUrl(imageData).then((fileEntry: any) => {
+        fileEntry.file((file: any) => {
+          this.readFile(file);
+        });
+      })
+      .catch(err => {console.error('Error resolving the file system url'); });
+    },
+    (err) => {
       // Handle error
     });
   }
 
-  resolveFileEntry(res) {
-    res.file((resFile) => {
-     const reader = this.getFileReader();
-     console.log(reader);
-     reader.readAsDataURL(resFile);
-     reader.onload = (e: any) => {
-        // The file's text will be printed here
-      console.log(e.target.result);
-     };
-    });
+  readFile(file: any) {
+      const fileReader = new FileReader();
+      const realFileReader = (fileReader as any)._realReader;
+      fileReader.onload = (evt) => {
+        // the base64 of the video is: evt.target.result
+        console.log('----- on load -----');
+        console.log(evt.target.result);
+        const blob = evt.target.result;
+        this.imageService.uploadImage(blob);
+      };
+      fileReader.readAsDataURL(file);
   }
-
-  getFileReader(): FileReader {
-    const fileReader = new FileReader();
-    const zoneOriginalInstance = (fileReader as any).__zone_symbol__originalInstance;
-    return zoneOriginalInstance || fileReader;
-}
 
   async addDSpot() {
     await this.modalController.dismiss({ ...this.form.value, newSpotLocation: this.newSpotLocation});
@@ -116,5 +110,4 @@ export class AddSpotModalModalPage implements OnInit {
     });
     await actionSheet.present();
   }
-
 }
