@@ -30,29 +30,6 @@ export class ImageService {
       );
   }
 
-  uploadImage(file: any) {
-    const config = this.authService.config;
-    const bucket = new AWS.S3(
-      {
-          accessKeyId: 'AKIA6G3TPIZGFLSWMHEZ',
-          secretAccessKey: 'tsN8/OcHpoH60Bjq55TAuBw+KkDqkMILgDO5n2aKgNXi7',
-          region: config.region,
-      }
-    );
-    const params = {
-        Bucket: `dankimagebucket`,
-        Key: `test6.jpg`,
-        Body: file,
-        ACL: 'public-read',
-    };
-    console.log(params);
-    bucket.upload(params, (data: any) => {
-      console.log('success', data);
-    }, (err: any) => {
-      console.log('error', err);
-    });
-  }
-
   handleError<T>(operation = 'operation', result?: T) {
       return (error: any): Observable<T> => {
         // TODO: send the error to remote logging infrastructure
