@@ -74,11 +74,11 @@ export class AuthService {
   }
 
   private getNewCognitoUser(creds): CognitoUser {
-    return new CognitoUser({ Username: creds.username, Pool: this.userPool });
+    return new CognitoUser({ Username: creds.email, Pool: this.userPool });
   }
 
   private authDetails(creds): AuthenticationDetails {
-    return new AuthenticationDetails({ Username: creds.username, Password: creds.password });
+    return new AuthenticationDetails({ Username: creds.email, Password: creds.password });
   }
 
   private refreshSession(): Promise<CognitoUserSession> {
@@ -161,8 +161,10 @@ export class AuthService {
 
   // registers a new user
   register(creds): Observable<CognitoUser> {
+    console.log('register creds');
+    console.log(creds);
     return Observable.create(observer => {
-      this.userPool.signUp(creds.username, creds.password, this.buildAttributes(creds), null, (err, result) => {
+      this.userPool.signUp(creds.email, creds.password, this.buildAttributes(creds), null, (err, result) => {
         if (err) { return observer.error(err); }
         observer.next(result.user);
         observer.complete();
