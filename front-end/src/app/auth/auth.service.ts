@@ -120,9 +120,12 @@ export class AuthService {
 
   getCredentials(): Observable<any> {
     let result = null;
-    if (this._cognitoUser === null) {result =  this._getCreds(); }
-    else if (this.session && this.session.isValid()) {result = this._getCreds(); }
-    else { result = this.refreshSession().then(this._getCreds); }
+    if (this._cognitoUser === null) {result =  this._getCreds();
+    } else if (this.session && this.session.isValid()) {
+      result = this._getCreds();
+    } else {
+      result = this.refreshSession().then(this._getCreds);
+    }
     return from(result);
   }
 

@@ -24,8 +24,6 @@ export class Tab3Page implements OnInit {
     this.themeService.isThemeDark.next(ev.target.checked);
   }
 
-  deleteAccount() {}
-
   signOut() {
     this.authService.signout();
   }

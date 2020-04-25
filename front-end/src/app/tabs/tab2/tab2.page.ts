@@ -4,14 +4,14 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController, ToastController } from '@ionic/angular';
 import { map, latLng, tileLayer, marker } from 'leaflet';
 import { AddSpotModalModalPage } from './add-spot-modal/add-spot-modal.page';
-import { CognitoUser } from 'amazon-cognito-identity-js';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { SpotsService } from './spots.service';
 import { SpotModalPage } from './spot-modal/spot-modal.page';
 import { ActivatedRoute } from '@angular/router';
 import { Spot } from 'src/app/shared/dtos/spot';
 import { iconDefault, greenIcon, redIcon  } from 'src/app/shared/constants/spotConstants';
-import { SpotUtilities } from '../../shared/utils/spotUtils';
+import { DistanceUtils } from '../../shared/utils/spotUtils';
+import { AuthService } from 'src/app/auth/auth.service';
 
 
 @Component({
@@ -21,7 +21,7 @@ import { SpotUtilities } from '../../shared/utils/spotUtils';
 })
 export class Tab2Page implements OnInit {
   map: L.Map;
-  user: CognitoUser;
+  user: any;
   userLocation: L.LatLng;
   userLocationMarker: L.Marker;
   spots: Array<Spot>;
@@ -37,7 +37,8 @@ export class Tab2Page implements OnInit {
               private spotsService: SpotsService,
               private geolocation: Geolocation,
               private toastController: ToastController,
-              private ar: ActivatedRoute
+              private ar: ActivatedRoute,
+              private authService: AuthService,
     ) {
       this.spotMarkers = L.markerClusterGroup();
       this.plugMarkers = L.markerClusterGroup();
@@ -49,6 +50,7 @@ export class Tab2Page implements OnInit {
   }
 
   ngOnInit() {
+    this.user = this.authService.cognitoUser;
     this.ar.params.subscribe(() => {
       this.getSpots();
     });
@@ -74,7 +76,8 @@ export class Tab2Page implements OnInit {
 
     // Bind map press event for dropping a pin
     this.map.on('click', (ev: any) => {
-      this.addADankSpot(ev.latlng);
+      const pressedLocation = ev.latlng;
+      this.presentAddDankSpotModal(pressedLocation ? pressedLocation : this.map.getCenter());
     });
   }
 
@@ -143,7 +146,7 @@ export class Tab2Page implements OnInit {
               const clickedSpot = ev.target.options.spot;
               const originCoords = [this.userLocation.lat, this.userLocation.lng];
               const destinationCoords = clickedSpot.point.coordinates;
-              const distanceTo = SpotUtilities.toMiles(SpotUtilities.getDistance(originCoords, destinationCoords));
+              const distanceTo = DistanceUtils.toMiles(DistanceUtils.getDistance(originCoords, destinationCoords));
               this.presentSpotModal(clickedSpot, distanceTo);
         });
         if (spot.spotType === 'spot') {
@@ -159,9 +162,38 @@ export class Tab2Page implements OnInit {
     );
   }
 
-  async addADankSpot(pressedLocation) {
-    this.presentAddDankSpotModal(pressedLocation ? pressedLocation : this.map.getCenter());
+  addSpot(spot: any) {
+    const geoJson = JSON.stringify({ type: 'POINT', coordinates: [spot.newSpotLocation.lat, spot.newSpotLocation.lng]});
+    const newSpot = new Spot ({
+      ...spot,
+      submittedBy: this.user.username,
+      isPrivate: false,
+      geoJson,
+      hashKey: -64,
+      rangeKey: "ffa35520-375a-11ea-a61a-0700c0014f9b",
+      rating: 0,
+      spotType: 'spot',
+    });
+    this.spotsService.saveSpot(newSpot).subscribe(data => {
+      console.log(data);
+      this.addMarker(spot.newSpotLocation);
+      this.presentToast();
+    },
+    error => {
+      console.log(error);
+    });
   }
+
+  addMarker(markerLocation: any) {
+    const addedMarker = marker(markerLocation, { icon: redIcon });
+    addedMarker.on('click', (ev: any) => {
+      const originCoords = [ev.latlng.lat, ev.latlng.lng];
+      const destinationCoords = [this.userLocation.lat, this.userLocation.lng];
+      const distanceTo = DistanceUtils.toMiles(DistanceUtils.getDistance(originCoords, destinationCoords));
+      this.presentSpotModal({}, distanceTo);
+    });
+    this.spotMarkers.addLayer(addedMarker);
+}
 
   async presentSpotModal(clickedSpot, distanceTo) {
     const modal = await this.modalController.create(
@@ -190,15 +222,7 @@ export class Tab2Page implements OnInit {
     );
     modal.onDidDismiss().then((dataReturned: any) => {
       if (dataReturned.data) {
-        const addedMarker = marker(dataReturned.data.newSpotLocation, { icon: redIcon });
-        addedMarker.on('click', (ev: any) => {
-          const originCoords = [ev.latlng.lat, ev.latlng.lng];
-          const destinationCoords = [this.userLocation.lat, this.userLocation.lng];
-          const distanceTo = SpotUtilities.toMiles(SpotUtilities.getDistance(originCoords, destinationCoords));
-          this.presentSpotModal({}, distanceTo);
-        });
-        this.spotMarkers.addLayer(addedMarker);
-        this.presentToast();
+        this.addSpot(dataReturned.data);
       }
     });
     return await modal.present();

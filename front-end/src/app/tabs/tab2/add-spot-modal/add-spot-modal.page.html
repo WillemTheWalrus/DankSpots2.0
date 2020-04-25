@@ -14,35 +14,45 @@
         <ion-grid>
             <ion-row>
               <ion-col class="ion-text-center">
-                <ion-input type="text" placeholder="Spot Name" formControlName="name"></ion-input>
+                <ion-input type="text" placeholder="Spot Name" formControlName="spotName"></ion-input>
               </ion-col>
             </ion-row>
             <ion-row>
                 <ion-col class="ion-text-center">
-                  <ion-textarea rows="4" placeholder="Enter any description here..."></ion-textarea>
+                  <ion-textarea rows="4" placeholder="Enter any description here..." formControlName="description"></ion-textarea>
                 </ion-col>
               </ion-row>
             <ion-row>
-              <ion-col class="ion-text-center">
-                <ion-card (click)="presentActionSheet()" *ngIf="!image">
+              <ion-col size="12" class="ion-text-center">
+                <ion-card (click)="presentActionSheet()" *ngIf="!images.length">
                   <ion-card-header>
                     <ion-card-title>Upload Image(s)</ion-card-title>
                   </ion-card-header>
                   <ion-card-content>
-                    <ion-icon class="uploadImageIcon" name="cloud-upload"></ion-icon>
+                    <ion-icon class="upload-image-icon" name="cloud-upload"></ion-icon>
                   </ion-card-content>
                 </ion-card>
-                <ion-card *ngIf="image">
-                  {{image}}
-                  <ion-card-content>
-                  <img [src]="image" />
-                  </ion-card-content>
-                </ion-card>
+                <ion-col *ngIf="images.length">
+                    <ion-grid>
+                      <ion-row>
+                        <ion-col size="4" *ngFor="let image of images">
+                          <ion-img [src]="image"></ion-img>
+                        </ion-col> 
+                        <ion-col size="4" class="ion-text-center">
+                          <ion-item (click)="presentActionSheet()" class="ion-text-center">
+                            <ion-label>
+                              <ion-icon name="add-circle-outline" class="add-another-image-icon"></ion-icon>
+                            </ion-label>
+                          </ion-item>
+                        </ion-col>
+                      </ion-row>
+                    </ion-grid>
+                </ion-col>
               </ion-col>
             </ion-row>
             <ion-row>
               <ion-col class="ion-text-center">
-                <ion-button color="new" expand="full"  (click)="close()">Add Spot</ion-button>
+                <ion-button color="new" expand="full"  (click)="addSpot()">Add Spot</ion-button>
               </ion-col>
             </ion-row>
           </ion-grid>

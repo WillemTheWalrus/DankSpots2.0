@@ -13,20 +13,15 @@ export class SpotModalPage implements OnInit {
   @Input() clickedSpot: Spot;
   @Input() distanceTo: string;
   @Input() userLocation: any;
-  dogs: Array<any>;
-  constructor(private spotsService: SpotsService, private modalController: ModalController, private launchNav: LaunchNavigator) { }
+  constructor(private modalController: ModalController, 
+              private launchNav: LaunchNavigator) { }
 
-  ngOnInit() {
-    this.spotsService.getDogs().subscribe((data: any) => {
-       this.dogs = data.message;
-    });
-
-  }
+  ngOnInit() {}
 
   launchNagivator() {
     this.launchNav.navigate( this.clickedSpot.point.coordinates, { start: [this.userLocation.lat, this.userLocation.lng]})
       .then(
-        success => console.log('Launched navigator'),
+        success => console.log('Launched navigator', success),
         error => console.log('Error launching navigator', error)
       );
 

@@ -1,4 +1,4 @@
-export class SpotUtilities {
+export class DistanceUtils {
     // return distance in meters
     public static getDistance(origin: Array<number>, destination: Array<number>) {
         const lon1 = this.toRadian(origin[0]),
