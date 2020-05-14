@@ -7,6 +7,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Tab2Page } from './tab2.page';
 import { AddSpotModalModalPage } from './add-spot-modal/add-spot-modal.page';
 import { SpotModalPage } from './spot-modal/spot-modal.page';
+import { FileUploadModule } from 'ng2-file-upload';
 
 @NgModule({
   imports: [
@@ -17,7 +18,8 @@ import { SpotModalPage } from './spot-modal/spot-modal.page';
     ReactiveFormsModule,
     RouterModule.forChild([
       { path: '', component: Tab2Page },
-  ])
+    ]),
+    FileUploadModule,
   ],
   declarations: [Tab2Page, AddSpotModalModalPage, SpotModalPage],
   entryComponents: [AddSpotModalModalPage, SpotModalPage],

@@ -74,6 +74,10 @@ export class AddSpotModalModalPage implements OnInit {
     });
   }
 
+  validateForm() {
+    return this.form.invalid;
+  }
+
   async addSpot() {
     await this.modalController.dismiss({ ...this.form.value, images: this.images, newSpotLocation: this.newSpotLocation});
   }

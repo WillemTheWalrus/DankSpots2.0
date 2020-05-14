@@ -163,19 +163,16 @@ export class Tab2Page implements OnInit {
   }
 
   addSpot(spot: any) {
-    const geoJson = JSON.stringify({ type: 'POINT', coordinates: [spot.newSpotLocation.lat, spot.newSpotLocation.lng]});
+    const geoJson = { type: 'POINT', coordinates: [ spot.newSpotLocation.lat, spot.newSpotLocation.lng ] };
     const newSpot = new Spot ({
       ...spot,
       submittedBy: this.user.username,
       isPrivate: false,
       geoJson,
-      hashKey: -64,
-      rangeKey: "ffa35520-375a-11ea-a61a-0700c0014f9b",
-      rating: 0,
       spotType: 'spot',
+      imageList: spot.images.length ? spot.images : ['test'],
     });
     this.spotsService.saveSpot(newSpot).subscribe(data => {
-      console.log(data);
       this.addMarker(spot.newSpotLocation);
       this.presentToast();
     },
